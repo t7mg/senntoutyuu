@@ -3,6 +3,8 @@ using UnityEngine;
 
 public class PlayerController : MonoBehaviour
 {
+    //カウントダウンスクリプトを参照するための変数
+    [SerializeField] private Countdown countdownScript;
     Rigidbody2D rbody;          //Rigidbody2D型の変数
     float axisH = 0.0f;         //入力
     public float speed = 3.0f;  //移動速度
@@ -35,6 +37,11 @@ public class PlayerController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        //もしゲームが開始されていなければ、これ以降の移動処理を実行しない
+        if (countdownScript != null && !countdownScript.isGameActive)
+        {
+            return;
+        }
         //地上判定
         onGround = Physics2D.CircleCast(transform.position, //発射位置
                                         0.2f,               //円の半径
