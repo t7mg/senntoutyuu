@@ -295,7 +295,8 @@ GameObject:
   - component: {fileID: 450947572}
   - component: {fileID: 450947575}
   - component: {fileID: 450947576}
-  m_Layer: 0
+  - component: {fileID: 450947577}
+  m_Layer: 10
   m_Name: kabutomusi_0
   m_TagString: 1P
   m_Icon: {fileID: 0}
@@ -434,9 +435,9 @@ CapsuleCollider2D:
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
-  m_Offset: {x: 0, y: 1.5}
-  m_Size: {x: 3, y: 2}
-  m_Direction: 0
+  m_Offset: {x: 0.25, y: 1.2}
+  m_Size: {x: 3.3, y: 2.5}
+  m_Direction: 1
 --- !u!114 &450947575
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -457,6 +458,9 @@ MonoBehaviour:
   attack_powar: 5
   HP_1P: 100
   attack_cooltime: 2.5
+  Max_attack_cooltime: 300
+  dashSpeed: 7
+  doubleTapThreshold: 0.3
 --- !u!114 &450947576
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -470,6 +474,27 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   MAX_HP_1P: 100
+--- !u!114 &450947577
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 450947569}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 57a7bbb6085a93d4e85e31da95f016b4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _inputAction:
+    m_Name: Input
+    m_Type: 0
+    m_ExpectedControlType: 
+    m_Id: 59bb5ebc-9dd2-4eef-92f5-04370a6c85ca
+    m_Processors: 
+    m_Interactions: 
+    m_SingletonActionBindings: []
+    m_Flags: 0
 --- !u!1 &495230493
 GameObject:
   m_ObjectHideFlags: 0
@@ -481,10 +506,9 @@ GameObject:
   - component: {fileID: 495230494}
   - component: {fileID: 495230496}
   - component: {fileID: 495230497}
-  - component: {fileID: 495230499}
-  m_Layer: 7
+  m_Layer: 0
   m_Name: attack_box_2P
-  m_TagString: attack
+  m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -547,7 +571,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 2
+  m_SortingOrder: 3
   m_Sprite: {fileID: 7482667652216324306, guid: 311925a002f4447b3a28927169b83ea6, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
@@ -605,19 +629,6 @@ BoxCollider2D:
   m_AutoTiling: 0
   m_Size: {x: 1, y: 1}
   m_EdgeRadius: 0
---- !u!114 &495230499
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 495230493}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1c2d6c6e2f34c9a488d8155fdc497d08, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  MAX_HP_2P: 100
 --- !u!1 &519420028
 GameObject:
   m_ObjectHideFlags: 0
@@ -1225,7 +1236,7 @@ GameObject:
   - component: {fileID: 1660295286}
   - component: {fileID: 1660295285}
   - component: {fileID: 1660295290}
-  m_Layer: 0
+  m_Layer: 11
   m_Name: kabutomusi - 2P
   m_TagString: 2P
   m_Icon: {fileID: 0}
@@ -1249,9 +1260,12 @@ MonoBehaviour:
   groundLayer:
     serializedVersion: 2
     m_Bits: 64
-  attack_powar: 50
+  attack_powar: 5
   HP_2P: 100
   attack_cooltime: 2.5
+  Max_attack_cooltime: 300
+  dashSpeed: 7
+  doubleTapThreshold: 0.3
 --- !u!50 &1660295286
 Rigidbody2D:
   serializedVersion: 5
@@ -1313,9 +1327,9 @@ CapsuleCollider2D:
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
-  m_Offset: {x: 0, y: 1.5}
-  m_Size: {x: 3, y: 2}
-  m_Direction: 0
+  m_Offset: {x: -0.25, y: 1.2}
+  m_Size: {x: 3.2, y: 2.5}
+  m_Direction: 1
 --- !u!212 &1660295288
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -1370,7 +1384,7 @@ SpriteRenderer:
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
-  m_SpriteSortPoint: 0
+  m_SpriteSortPoint: 1
 --- !u!4 &1660295289
 Transform:
   m_ObjectHideFlags: 0
@@ -1412,9 +1426,9 @@ GameObject:
   - component: {fileID: 1661682866}
   - component: {fileID: 1661682867}
   - component: {fileID: 1661682868}
-  m_Layer: 7
+  m_Layer: 0
   m_Name: attack_box_1P
-  m_TagString: attack
+  m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -1477,7 +1491,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 2
+  m_SortingOrder: 3
   m_Sprite: {fileID: 7482667652216324306, guid: 311925a002f4447b3a28927169b83ea6, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
@@ -1544,10 +1558,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 1661682862}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4c342bffe306a424ab4cdd21822e5f8c, type: 3}
+  m_Script: {fileID: 11500000, guid: 3f10dd98a35092c46908a8021212c2df, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  MAX_HP_1P: 100
+  targetObject: {fileID: 1661682862}
 --- !u!1 &1720291312
 GameObject:
   m_ObjectHideFlags: 0

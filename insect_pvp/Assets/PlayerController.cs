@@ -14,7 +14,17 @@ public class PlayerController : MonoBehaviour
     public float HP_1P = 100.0f;               //HP
     bool goattack_1P;                  //攻撃開始フラグ
     bool canattack;
-    public float attack_cooltime = 60.0f;    //攻撃クールタイム
+    public float attack_cooltime;    //攻撃クールタイム
+    public float Max_attack_cooltime = 300.0f;
+   
+    [Header("ダッシュ設定")]
+    public float dashSpeed = 6.0f;             // ダッシュ時の移動速度
+    public float doubleTapThreshold = 0.3f;    // 連打を許容する時間（秒）
+    private float currentSpeed;                // 現在の適用速度
+    private bool isDashing = false;            // ダッシュ中フラグ
+    private float lastDTime = 0f;              // Dキーの前回タップ時間
+    private float lastATime = 0f;              // Aキーの前回タップ時間
+    private KeyCode activeDashKey = KeyCode.None; // ダッシュを維持しているキー
 
     private Player2PController player_2P_HP;
 
@@ -25,23 +35,42 @@ public class PlayerController : MonoBehaviour
         rbody = this.GetComponent<Rigidbody2D>();
         goattack_1P = false;
         canattack = false;
+        currentSpeed = speed; // 初期速度は通常速度
+        attack_cooltime = Max_attack_cooltime;
+       
+        
     }
 
-    // Update is called once per frame
+  
     void Update()
     {
-        
-        //地上判定
-        onGround = Physics2D.CircleCast(transform.position, //発射位置
-                                        0.2f,               //円の半径
-                                        Vector2.down,       //発射方向
-                                        0.0f,               //発射距離
-                                        groundLayer);       //検出するレイヤー
+        Transform Attack_Box_1P = transform.Find("attack_box_1P");
+
+        if (attack_cooltime > 0)
+        {
+            attack_cooltime--;
+            //Debug.Log("attackNG");
+        }
+        else
+        {
+            attack_cooltime = 0;
+            //Debug.Log("attackOK");
+        }
+
+            //地上判定
+            onGround = Physics2D.CircleCast(transform.position, //発射位置
+                                            0.2f,               //円の半径
+                                            Vector2.down,       //発射方向
+                                            0.0f,               //発射距離
+                                            groundLayer);       //検出するレイヤー
 
         if (Input.GetKey(KeyCode.W))                    //キャラクターをジャンプさせる
         {
             goJump = true;   //ジャンプフラグを立てる
         }
+
+        HandleDashInput();
+
         //A,Dの入力をチェックする
         if (Input.GetKey(KeyCode.A))
         {
@@ -69,21 +98,26 @@ public class PlayerController : MonoBehaviour
         }
 
         //攻撃（S）の入力チェック
-        if (Input.GetKeyDown(KeyCode.S))
+        if (Input.GetKeyDown(KeyCode.S) && attack_cooltime == 0)
         {
             canattack = true;
+            attack_cooltime = Max_attack_cooltime;
 
             if (canattack == true)
             {
+                
+
                 goattack_1P = true;
-                Debug.Log("true");
+                //Debug.Log("true");
                 canattack = false;
+
+                
             }
         }
         else
         {
             canattack = false;
- 
+            
         }
 
     }
@@ -93,7 +127,7 @@ public class PlayerController : MonoBehaviour
         if (onGround || axisH != 0)  //地面の上or速度が0ではない
         {
             //速度を更新する
-            rbody.linearVelocity = new Vector2(axisH * speed, rbody.linearVelocity.y);
+            rbody.linearVelocity = new Vector2(axisH * currentSpeed, rbody.linearVelocity.y);
         }
         if (onGround && goJump)      //地面の上でジャンプキーが押された
         {
@@ -105,17 +139,65 @@ public class PlayerController : MonoBehaviour
         }
     }
 
+    // ダッシュの開始と終了を管理するメソッド
+    void HandleDashInput()
+    {
+        if (isDashing)
+        {
+            // ダッシュのトリガーになったキーが離されたら通常速度に戻す
+            if (Input.GetKeyUp(activeDashKey))
+            {
+                isDashing = false;
+                activeDashKey = KeyCode.None;
+                currentSpeed = speed;
+                Debug.Log("通常移動に戻りました");
+            }
+        }
+        else
+        {
+            // 右ダッシュ判定 Dキー
+            if (Input.GetKeyDown(KeyCode.D))
+            {
+                if (Time.time - lastDTime <= doubleTapThreshold)
+                {
+                    isDashing = true;
+                    activeDashKey = KeyCode.None; // 直後のバグ防止に一旦クリア
+                    activeDashKey = KeyCode.D;
+                    currentSpeed = dashSpeed;
+                    Debug.Log("右ダッシュ開始！");
+                }
+                lastDTime = Time.time;
+            }
+
+            // 左ダッシュ判定 Aキー
+            if (Input.GetKeyDown(KeyCode.A))
+            {
+                if (Time.time - lastATime <= doubleTapThreshold)
+                {
+                    isDashing = true;
+                    activeDashKey = KeyCode.None;
+                    activeDashKey = KeyCode.A;
+                    currentSpeed = dashSpeed;
+                    Debug.Log("左ダッシュ開始！");
+                }
+                lastATime = Time.time;
+            }
+        }
+    }
+
     private void OnTriggerStay2D(Collider2D collision)
     {
        
-        if (collision.gameObject.tag == "2P" && goattack_1P == true)
+        if (collision.gameObject.CompareTag("2P") && goattack_1P == true)
         {
-            
+
+            Debug.Log("ok");
+
             if (collision.TryGetComponent<attack_2P>(out var ToDamage))
             {
                 ToDamage.ToDamage_2P(attack_powar);
                 Debug.Log("ダメージ成功");
-                
+
             }
 
         }
@@ -126,6 +208,8 @@ public class PlayerController : MonoBehaviour
         }
 
     }
+
+    
 
     
    
