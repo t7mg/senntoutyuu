@@ -20,17 +20,18 @@ public class Countdown : MonoBehaviour
     {
         for (int i = 3; i > 0; i--)
         {
-            countdownText.text = i.ToString();
+            countdownText.text = i.ToString();  
             yield return new WaitForSeconds(1.0f);
         }
 
-        countdownText.text = "START!";
+        countdownText.text = "FIGHT!";
 
         //「START!」のタイミングでゲーム開始フラグを true（操作可能）にする
         isGameActive = true;
-        Debug.Log("ゲーム開始！操作を許可します。");
+        Debug.Log("ゲーム開始、操作を許可します。");
 
         yield return new WaitForSeconds(1.0f);
         countdownText.gameObject.SetActive(false);
     }
+
 }

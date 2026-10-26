@@ -3,19 +3,19 @@ using UnityEngine;
 
 public class PlayerController : MonoBehaviour
 {
-    //カウントダウンスクリプトを参照するための変数
+    // カウントダウンスクリプトを参照するための変数
     [SerializeField] private Countdown countdownScript;
-    Rigidbody2D rbody;          //Rigidbody2D型の変数
-    float axisH = 0.0f;         //入力
-    public float speed = 3.0f;  //移動速度
-    public float jump = 9.0f;   //ジャンプ力
-    public LayerMask groundLayer;//着地できるレイヤー
-    bool goJump = false;        //ジャンプ開始フラグ
-    bool onGround = false;      //地面フラグ
-    public float attack_powar = 5.0f;       //攻撃力
-    public float HP_1P = 100.0f;               //HP
-    bool goattack_1P = false;                  //攻撃開始フラグ
-    public float attack_cooltime = 60.0f;    //攻撃クールタイム
+    Rigidbody2D rbody;          // Rigidbody2D型の変数
+    float axisH = 0.0f;         // 入力
+    public float speed = 3.0f;  // 移動速度
+    public float jump = 9.0f;   // ジャンプ力
+    public LayerMask groundLayer;// 着地できるレイヤー
+    bool goJump = false;        // ジャンプ開始フラグ
+    bool onGround = false;      // 地面フラグ
+    public float attack_powar = 5.0f;       // 攻撃力
+    public float HP_1P = 100.0f;               // HP
+    bool goattack_1P = false;                  // 攻撃開始フラグ
+    public float attack_cooltime = 60.0f;    // 攻撃クールタイム
     public bool canattack = true;
 
     [Header("ダッシュ設定")]
@@ -27,37 +27,53 @@ public class PlayerController : MonoBehaviour
     private float lastATime = 0f;              // Aキーの前回タップ時間
     private KeyCode activeDashKey = KeyCode.None; // ダッシュを維持しているキー
 
+    [Header("成長タイマー設定")]
+    public float growthTimer = 6.0f;          // 成長までの時間
+    private bool hasGrown = false;             //すでに成長したかどうかのフラグ
+
     void Start()
     {
-        //Rigidbody2Dをとってくる
+        // Rigidbody2Dをとってくる
         rbody = this.GetComponent<Rigidbody2D>();
         currentSpeed = speed; // 初期速度は通常速度
+
     }
 
     // Update is called once per frame
     void Update()
     {
-        //もしゲームが開始されていなければ、これ以降の移動処理を実行しない
+        // もしゲームが開始されていなければ、これ以降の移動処理を実行しない
         if (countdownScript != null && !countdownScript.isGameActive)
         {
             return;
         }
-        //地上判定
-        onGround = Physics2D.CircleCast(transform.position, //発射位置
-                                        0.2f,               //円の半径
-                                        Vector2.down,       //発射方向
-                                        0.0f,               //発射距離
-                                        groundLayer);       //検出するレイヤー
 
-        if (Input.GetKey(KeyCode.W))                    //キャラクターをジャンプさせる
+        // CharacterManagerがSetActive(false)にしている間は、このUpdate自体が実行されないため自動的にタイマーが止まります
+        if (!hasGrown)
         {
-            goJump = true;   //ジャンプフラグを立てる
+            growthTimer -= Time.deltaTime; // 毎フレーム時間を引いていく
+            if (growthTimer <= 0f)
+            {
+                growth();
+            }
+        }
+
+        // 地上判定
+        onGround = Physics2D.CircleCast(transform.position, // 発射位置
+                                        0.2f,               // 円の半径
+                                        Vector2.down,       // 発射方向
+                                        0.0f,               // 発射距離
+                                        groundLayer);       // 検出するレイヤー
+
+        if (Input.GetKey(KeyCode.W))                    // キャラクターをジャンプさせる
+        {
+            goJump = true;   // ジャンプフラグを立てる
         }
 
         // --- ダッシュの入力チェック ---
         HandleDashInput();
 
-        //A,Dの入力をチェックする
+        // A,Dの入力をチェックする
         if (Input.GetKey(KeyCode.A))
         {
             axisH = -1.0f;
@@ -71,20 +87,21 @@ public class PlayerController : MonoBehaviour
             axisH = 0.0f;
         }
 
+        //向き変更時にサイズがリセットされないように現在のスケールを維持
+        Vector3 currentScale = transform.localScale;
+
         if (axisH > 0.0f)
         {
-            //右移動
-            //Debug.Log("右移動");
-            transform.localScale = new Vector2(-1, 1);//左右反転
+            // 右移動（元のコードの仕様に合わせてXをマイナスに反転）
+            transform.localScale = new Vector3(-Mathf.Abs(currentScale.x), currentScale.y, currentScale.z);
         }
         else if (axisH < 0.0f)
         {
-            //左移動
-            //Debug.Log("左移動");
-            transform.localScale = new Vector2(1, 1);//左右反転
+            // 左移動
+            transform.localScale = new Vector3(Mathf.Abs(currentScale.x), currentScale.y, currentScale.z);
         }
 
-        //攻撃（S）の入力チェック
+        // 攻撃（S）の入力チェック
         if (Input.GetKeyDown(KeyCode.S))
         {
             goattack_1P = true;
@@ -93,17 +110,17 @@ public class PlayerController : MonoBehaviour
 
     void FixedUpdate()
     {
-        if (onGround || axisH != 0)  //地面の上or速度が0ではない
+        if (onGround || axisH != 0)  // 地面の上or速度が0ではない
         {
             // 速度を更新する
             rbody.linearVelocity = new Vector2(axisH * currentSpeed, rbody.linearVelocity.y);
         }
-        if (onGround && goJump)      //地面の上でジャンプキーが押された
+        if (onGround && goJump)      // 地面の上でジャンプキーが押された
         {
-            //ジャンプさせる
-            Vector2 jumpPw = new Vector2(0, jump);          //ジャンプさせるベクトルを作る
-            rbody.AddForce(jumpPw, ForceMode2D.Impulse);    //瞬間的な力を加える
-            goJump = false;                                 //ジャンプフラグを下す 
+            // ジャンプさせる
+            Vector2 jumpPw = new Vector2(0, jump);          // ジャンプさせるベクトルを作る
+            rbody.AddForce(jumpPw, ForceMode2D.Impulse);    // 瞬間的な力を加える
+            goJump = false;                                 // ジャンプフラグを下す 
         }
     }
 
@@ -175,5 +192,25 @@ public class PlayerController : MonoBehaviour
     public void TakeDamage(int damage)
     {
 
+    }
+
+    // OnDisableで消した（非アクティブになった）ときに反応する
+    void OnDisable()
+    {
+        // ダッシュ状態を完全にリセット
+        isDashing = false;
+        activeDashKey = KeyCode.None;
+        currentSpeed = speed; // 通常速度に戻す
+        Debug.Log("通常移動に戻りました");
+    }
+
+    void growth()
+    {
+        hasGrown = true; // 成長フラグを立てて、何度も大きくならないようにする
+        Debug.Log("成長！でかくなります");
+
+        //現在の左右の向きを維持したまま、サイズだけでかくする
+        float directionX = Mathf.Sign(transform.localScale.x); // 現在の向き（1か-1）を取得
+        transform.localScale = new Vector3(2f * directionX, 2f, 2f);
     }
 }
