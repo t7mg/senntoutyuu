@@ -112,12 +112,12 @@ public class Player2PController : MonoBehaviour
         
         if (collision.gameObject.tag == "1P" && goattack_2P == true)
         {
-            
-            if(collision.TryGetComponent<attack_1P>(out var ToDamage))
+
+            if (collision.TryGetComponent<attack_1P>(out var ToDamage))
             {
                 ToDamage.ToDamage_1P(attack_powar);
                 Debug.Log("É_ÉÅÅ[ÉWê¨å˜");
-                
+
             }
 
         }
