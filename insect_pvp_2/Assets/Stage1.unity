@@ -586,7 +586,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 2
-  m_Sprite: {fileID: 21300000, guid: b59d98068d4086b45b205d9496a1075b, type: 3}
+  m_Sprite: {fileID: 21300000, guid: c03a2b515136d4948bc39610d10c568b, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -594,7 +594,7 @@ SpriteRenderer:
   m_Size: {x: 3, y: 3}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
-  m_WasSpriteAssigned: 0
+  m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
 --- !u!4 &98195143
@@ -1382,7 +1382,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 2
-  m_Sprite: {fileID: 21300000, guid: 6f8a3a0cd7ccd5843be2d4326a192cd2, type: 3}
+  m_Sprite: {fileID: 21300000, guid: c598e1bfd8ece294092e4917699604c3, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 1
   m_FlipY: 0
@@ -1390,7 +1390,7 @@ SpriteRenderer:
   m_Size: {x: 3.68, y: 4}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
-  m_WasSpriteAssigned: 0
+  m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
 --- !u!4 &386294918
@@ -1712,7 +1712,15 @@ MonoBehaviour:
     m_Id: 31fb50f4-6df2-4d42-9541-cd4ed340cde8
     m_Processors: 
     m_Interactions: 
-    m_SingletonActionBindings: []
+    m_SingletonActionBindings:
+    - m_Name: 
+      m_Id: ad29f75a-0044-4302-a444-4f8b309ae982
+      m_Path: <Keyboard>/s
+      m_Interactions: Tap(pressPoint=1),Hold(pressPoint=1)
+      m_Processors: 
+      m_Groups: 
+      m_Action: Input
+      m_Flags: 0
     m_Flags: 0
 --- !u!1 &455193087
 GameObject:
@@ -2693,7 +2701,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 3
-  m_Sprite: {fileID: 21300000, guid: 40c11247d31c5eb4bbbe895ccaea01ab, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 825271acafee86b4da2e43c51df79bc0, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -2701,7 +2709,7 @@ SpriteRenderer:
   m_Size: {x: 3.5, y: 4}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
-  m_WasSpriteAssigned: 0
+  m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
 --- !u!4 &589729413
@@ -3066,7 +3074,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 2
-  m_Sprite: {fileID: 21300000, guid: f913e7791d6a4eb44a70f4adf6af2542, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 544600f8dc12009458c1c0ebd0f588c0, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -3074,7 +3082,7 @@ SpriteRenderer:
   m_Size: {x: 4, y: 2.7}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
-  m_WasSpriteAssigned: 0
+  m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
 --- !u!4 &641054454
@@ -3490,7 +3498,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 2
-  m_Sprite: {fileID: 21300000, guid: 89dca911179c9cd439747d10f82fcf81, type: 3}
+  m_Sprite: {fileID: 21300000, guid: f9752b09b7fca4c4dbbf72eb5231ca1e, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 1
   m_FlipY: 0
@@ -3498,7 +3506,7 @@ SpriteRenderer:
   m_Size: {x: 4, y: 2.7}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
-  m_WasSpriteAssigned: 0
+  m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
 --- !u!4 &871849807
@@ -3969,7 +3977,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 0f531eb943c74fe479bc3e2542a4c7a2, type: 3}
+  m_Sprite: {fileID: -6601691336363857274, guid: 0f531eb943c74fe479bc3e2542a4c7a2, type: 3}
   m_Type: 3
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -4396,7 +4404,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 3
-  m_Sprite: {fileID: 21300000, guid: c87373460044b864fb997cad52073793, type: 3}
+  m_Sprite: {fileID: 21300000, guid: d46b5e18ad312904d9a345b50f2be95f, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 1
   m_FlipY: 0
@@ -4404,7 +4412,7 @@ SpriteRenderer:
   m_Size: {x: 3.5, y: 4}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
-  m_WasSpriteAssigned: 0
+  m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
 --- !u!4 &1070264026
@@ -5006,7 +5014,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 2
-  m_Sprite: {fileID: 21300000, guid: 518eb3102ea63664cb2733f6ab0cb35a, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 8dc2a123789eaf24eae9a80ae83c2788, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -5014,7 +5022,7 @@ SpriteRenderer:
   m_Size: {x: 3.68, y: 4}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
-  m_WasSpriteAssigned: 0
+  m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
 --- !u!4 &1471173056
@@ -6384,7 +6392,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 2
-  m_Sprite: {fileID: 21300000, guid: ccd221f34caba744da1724cd4eadc600, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 58aa5307d0485844c98953a0eca4ed4d, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 1
   m_FlipY: 0
@@ -6392,7 +6400,7 @@ SpriteRenderer:
   m_Size: {x: 3, y: 3}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
-  m_WasSpriteAssigned: 0
+  m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
 --- !u!4 &1790061399
@@ -6482,7 +6490,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 0f531eb943c74fe479bc3e2542a4c7a2, type: 3}
+  m_Sprite: {fileID: -6601691336363857274, guid: 0f531eb943c74fe479bc3e2542a4c7a2, type: 3}
   m_Type: 3
   m_PreserveAspect: 0
   m_FillCenter: 1
