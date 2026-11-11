@@ -594,7 +594,7 @@ SpriteRenderer:
   m_Size: {x: 3, y: 3}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
-  m_WasSpriteAssigned: 1
+  m_WasSpriteAssigned: 0
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
 --- !u!4 &98195143
@@ -653,7 +653,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 112127006}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8bd76e42a54cf714da2ca993d063ca38, type: 3}
+  m_Script: {fileID: 11500000, guid: 9874a0b4fbd126b4fb8aa4a875df8395, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   countdownText: {fileID: 1489223047}
@@ -1390,7 +1390,7 @@ SpriteRenderer:
   m_Size: {x: 3.68, y: 4}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
-  m_WasSpriteAssigned: 1
+  m_WasSpriteAssigned: 0
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
 --- !u!4 &386294918
@@ -1422,8 +1422,8 @@ GameObject:
   - component: {fileID: 450947573}
   - component: {fileID: 450947572}
   - component: {fileID: 450947576}
-  - component: {fileID: 450947577}
   - component: {fileID: 450947578}
+  - component: {fileID: 450947577}
   m_Layer: 10
   m_Name: kabutomusi_0
   m_TagString: 1P
@@ -1690,9 +1690,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f9e8bcc68e422534aa451242af5811b5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  countdownScript: {fileID: 0}
+  countdownScript: {fileID: 112127007}
   speed: 5
-  jump: 9
+  jump: 2.5
   groundLayer:
     serializedVersion: 2
     m_Bits: 64
@@ -2701,7 +2701,7 @@ SpriteRenderer:
   m_Size: {x: 3.5, y: 4}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
-  m_WasSpriteAssigned: 1
+  m_WasSpriteAssigned: 0
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
 --- !u!4 &589729413
@@ -3074,7 +3074,7 @@ SpriteRenderer:
   m_Size: {x: 4, y: 2.7}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
-  m_WasSpriteAssigned: 1
+  m_WasSpriteAssigned: 0
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
 --- !u!4 &641054454
@@ -3498,7 +3498,7 @@ SpriteRenderer:
   m_Size: {x: 4, y: 2.7}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
-  m_WasSpriteAssigned: 1
+  m_WasSpriteAssigned: 0
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
 --- !u!4 &871849807
@@ -3790,7 +3790,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 943340374}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 498c002f75977544ebcec070e23596d1, type: 3}
+  m_Script: {fileID: 11500000, guid: fd146281850e7b34bae0ade4f4266b3e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   countdownMinutes: 3
@@ -4404,7 +4404,7 @@ SpriteRenderer:
   m_Size: {x: 3.5, y: 4}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
-  m_WasSpriteAssigned: 1
+  m_WasSpriteAssigned: 0
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
 --- !u!4 &1070264026
@@ -4449,16 +4449,16 @@ MonoBehaviour:
   m_GameObject: {fileID: 1140446197}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e94d18068af441d4baba8ffe269fd167, type: 3}
+  m_Script: {fileID: 11500000, guid: 37df887aae833f04e832577c0c935ca9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   countdownScript: {fileID: 112127007}
-  characterA: {fileID: 98195138}
-  characterB: {fileID: 589729407}
-  notbattle1: {fileID: 450947569}
-  notbattle2: {fileID: 507386640}
-  notbattle3: {fileID: 386294912}
-  notbattle4: {fileID: 871849801}
+  characterA: {fileID: 450947569}
+  characterB: {fileID: 507386640}
+  notbattle1: {fileID: 589729407}
+  notbattle2: {fileID: 386294912}
+  notbattle3: {fileID: 871849801}
+  notbattle4: {fileID: 98195138}
 --- !u!4 &1140446199
 Transform:
   m_ObjectHideFlags: 0
@@ -4777,7 +4777,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1417253670}
-  - component: {fileID: 1417253669}
+  - component: {fileID: 1417253671}
   m_Layer: 0
   m_Name: change_2P
   m_TagString: Untagged
@@ -4785,25 +4785,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &1417253669
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1417253668}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: aabfd10530b31514b83f17d8c97efac1, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  countdownScript: {fileID: 112127007}
-  characterA: {fileID: 1790061394}
-  characterB: {fileID: 1070264020}
-  notbattle1: {fileID: 1660295284}
-  notbattle2: {fileID: 245965288}
-  notbattle3: {fileID: 1471173050}
-  notbattle4: {fileID: 641054448}
 --- !u!4 &1417253670
 Transform:
   m_ObjectHideFlags: 0
@@ -4819,6 +4800,25 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1417253671
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1417253668}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8bf109aac0360a24cab57e7d7ae9b721, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  countdownScript: {fileID: 112127007}
+  characterA: {fileID: 1660295284}
+  characterB: {fileID: 245965288}
+  notbattle1: {fileID: 1070264020}
+  notbattle2: {fileID: 1471173050}
+  notbattle3: {fileID: 641054448}
+  notbattle4: {fileID: 1790061394}
 --- !u!1 &1471173050
 GameObject:
   m_ObjectHideFlags: 0
@@ -5014,7 +5014,7 @@ SpriteRenderer:
   m_Size: {x: 3.68, y: 4}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
-  m_WasSpriteAssigned: 1
+  m_WasSpriteAssigned: 0
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
 --- !u!4 &1471173056
@@ -6392,7 +6392,7 @@ SpriteRenderer:
   m_Size: {x: 3, y: 3}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
-  m_WasSpriteAssigned: 1
+  m_WasSpriteAssigned: 0
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
 --- !u!4 &1790061399
