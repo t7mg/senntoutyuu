@@ -15,7 +15,7 @@ public class Player1PController_kamakiri : MonoBehaviour
     public LayerMask groundLayer;//着地できるレイヤー
     bool goJump = false;        //ジャンプ開始フラグ
     bool onGround = false;      //地面フラグ
-    public int attack_powar = 5;       //攻撃力
+    public float attack_powar = 5.0f;       //攻撃力
     //public float HP_1P = 100.0f;               //HP
     bool goattack_1P;                  //攻撃開始フラグ
     bool canattack;
@@ -40,7 +40,9 @@ public class Player1PController_kamakiri : MonoBehaviour
     private KeyCode activeDashKey = KeyCode.None; // ダッシュを維持しているキー
     //private KeyCode activeFryKey = KeyCode.None; // 飛行を維持しているキー
 
-
+    [Header("成長タイマー設定")]
+    public float growthTimer = 60.0f; // 成長までの時間
+    private bool hasGrown = false; // すでに成長したかどうかのフラグ
 
     [SerializeField] private InputAction _inputAction;
     void Start()
@@ -62,6 +64,16 @@ public class Player1PController_kamakiri : MonoBehaviour
         if (countdownScript != null && !countdownScript.isGameActive)
         {
             return;
+        }
+
+        // タイマー処理
+        if (!hasGrown)
+        {
+            growthTimer -= Time.deltaTime;
+            if (growthTimer <= 0f)
+            {
+                growth();
+            }
         }
 
         if (attack_cooltime > 0)
@@ -110,17 +122,21 @@ public class Player1PController_kamakiri : MonoBehaviour
         {
             axisH = 0.0f;
         }
+
+        Vector3 currentScale = transform.localScale;
         if (axisH < 0.0f)
         {
             //右移動
 
             transform.localScale = new Vector2(-1, 1);//左右反転
+            transform.localScale = new Vector3(-Mathf.Abs(currentScale.x), currentScale.y, currentScale.z);
         }
         else if (axisH > 0.0f)
         {
             //右移動
 
             transform.localScale = new Vector2(1, 1);//左右反転
+            transform.localScale = new Vector3(Mathf.Abs(currentScale.x), currentScale.y, currentScale.z);
         }
 
         //攻撃（S）の入力チェック
@@ -207,13 +223,13 @@ public class Player1PController_kamakiri : MonoBehaviour
         {
             case TapInteraction:
                 // TapInteractionの場合は短押し
-                Debug.Log("短押しされたよ！");
+                //Debug.Log("短押しされたよ！");
                 normal = true;
                 break;
 
             case HoldInteraction:
                 // HoldInteractionの場合は長押し
-                Debug.Log("長押しされたよ！");
+                //Debug.Log("長押しされたよ！");
                 strong = true;
 
                 break;
@@ -234,7 +250,7 @@ public class Player1PController_kamakiri : MonoBehaviour
                 isDashing = false;
                 activeDashKey = KeyCode.None;
                 currentSpeed = speed;
-                Debug.Log("通常移動に戻りました");
+                //Debug.Log("通常移動に戻りました");
             }
         }
         else
@@ -248,7 +264,7 @@ public class Player1PController_kamakiri : MonoBehaviour
                     activeDashKey = KeyCode.None; // 直後のバグ防止に一旦クリア
                     activeDashKey = KeyCode.D;
                     currentSpeed = dashSpeed;
-                    Debug.Log("右ダッシュ開始！");
+                    //Debug.Log("右ダッシュ開始！");
                 }
                 lastDTime = Time.time;
             }
@@ -263,7 +279,7 @@ public class Player1PController_kamakiri : MonoBehaviour
                     activeDashKey = KeyCode.None;
                     activeDashKey = KeyCode.A;
                     currentSpeed = dashSpeed;
-                    Debug.Log("左ダッシュ開始！");
+                   //Debug.Log("左ダッシュ開始！");
                 }
                 lastATime = Time.time;
             }
@@ -287,28 +303,51 @@ public class Player1PController_kamakiri : MonoBehaviour
 
 
 
-            if (normal == true)
+            if (normal == true && hasGrown == true)
             {
                 if (collision.TryGetComponent<attack_2P>(out var ToDamage))
                 {
                     ToDamage.ToDamage_2P(attack_powar);
-                    Debug.Log("ダメージ成功");
+                    //Debug.Log("ダメージ成功");
 
                     goattack_1P = false;
                     normal = false;
                 }
             }
-            else if (strong == true)
+            else if (strong == true && hasGrown == true)
             {
                 if (collision.TryGetComponent<attack_2P>(out var ToDamage))
                 {
                     ToDamage.ToDamage_2P_strong(attack_powar);
-                    Debug.Log("ダメージ成功");
+                    //Debug.Log("ダメージ成功");
 
                     goattack_1P = false;
                     strong = false;
                 }
             }
+            else if (normal == true && hasGrown == false)
+            {
+                if (collision.TryGetComponent<attack_2P>(out var ToDamage))
+                {
+                    ToDamage.ToDamage_2P_baby(attack_powar);
+                    //Debug.Log("ダメージ成功");
+                    // play_SE.PlayOneShot(normal_SE);
+                    goattack_1P = false;
+                    strong = false;
+                }
+            }
+            else if (strong == true && hasGrown == false)
+            {
+                if (collision.TryGetComponent<attack_2P>(out var ToDamage))
+                {
+                    ToDamage.ToDamage_2P_strong_baby(attack_powar);
+                    //Debug.Log("ダメージ成功");
+                    // play_SE.PlayOneShot(strong_SE);
+                    goattack_1P = false;
+                    strong = false;
+                }
+            }
+
             else
             {
                 goattack_1P = false;
@@ -317,6 +356,12 @@ public class Player1PController_kamakiri : MonoBehaviour
 
         }
 
+    }
+    void growth()
+    {
+        hasGrown = true;
+        float directionX = Mathf.Sign(transform.localScale.x);
+        transform.localScale = new Vector3(1.2f * directionX, 1.2f, 1.2f);
     }
 }
 

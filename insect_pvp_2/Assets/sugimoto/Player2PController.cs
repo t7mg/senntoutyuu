@@ -14,7 +14,7 @@ public class Player2PController : MonoBehaviour
     public LayerMask groundLayer;    //着地できるレイヤー
     bool goJump = false;        //ジャンプ開始フラグ
     bool onGround = false;      //地面フラグ
-    public int attack_powar = 5;       //攻撃力
+    public float attack_powar = 5.0f;       //攻撃力
     //public float HP_2P = 100.0f;               //HP
     bool goattack_2P;                  //攻撃開始フラグ
     bool canattack;
@@ -36,6 +36,11 @@ public class Player2PController : MonoBehaviour
     private float lastATime = 0f;              // Aキーの前回タップ時間
     private float lastUpTime = 0f;              // Wキーの前回タップ時間
     private KeyCode activeDashKey = KeyCode.None; // ダッシュを維持しているキー
+
+    [Header("成長タイマー設定")]
+    public float growthTimer = 60.0f; // 成長までの時間
+    private bool hasGrown = false; // すでに成長したかどうかのフラグ
+
 
 
     [SerializeField] private InputAction _inputAction;
@@ -59,7 +64,15 @@ public class Player2PController : MonoBehaviour
             return;
         }
 
-
+        // タイマー処理
+        if (!hasGrown)
+        {
+            growthTimer -= Time.deltaTime;
+            if (growthTimer <= 0f)
+            {
+                growth();
+            }
+        }
 
         if (attack_cooltime > 0)
         {
@@ -112,18 +125,22 @@ public class Player2PController : MonoBehaviour
         {
             axisH = 0.0f;
         }
-        if (axisH < 0.0f)
+
+        Vector3 currentScale = transform.localScale;
+        if (axisH > 0.0f)
         {
             //右移動
             //Debug.Log("右移動");
             transform.localScale = new Vector2(1, 1);//左右反転
+            transform.localScale = new Vector3(-Mathf.Abs(currentScale.x), currentScale.y, currentScale.z);
         }
-        else if (axisH > 0.0f)
+        else if (axisH < 0.0f)
         { 
             //右移動
             // Debug.Log("左移動");
             transform.localScale = new Vector2(-1, 1);//左右反転
-         }
+            transform.localScale = new Vector3(Mathf.Abs(currentScale.x), currentScale.y, currentScale.z);
+        }
 
         if (Input.GetKeyDown(KeyCode.DownArrow) && attack_cooltime == 0)
         {
@@ -207,13 +224,13 @@ public class Player2PController : MonoBehaviour
         {
             case TapInteraction:
                 // TapInteractionの場合は短押し
-                Debug.Log("短押しされたよ！");
+                //Debug.Log("短押しされたよ！");
                 normal = true;
                 break;
 
             case HoldInteraction:
                 // HoldInteractionの場合は長押し
-                Debug.Log("長押しされたよ！");
+                //Debug.Log("長押しされたよ！");
                 strong = true;
                 break;
         }
@@ -230,7 +247,7 @@ public class Player2PController : MonoBehaviour
                 isDashing = false;
                 activeDashKey = KeyCode.None;
                 currentSpeed = speed;
-                Debug.Log("通常移動に戻りました");
+                //Debug.Log("通常移動に戻りました");
             }
         }
         else
@@ -244,7 +261,7 @@ public class Player2PController : MonoBehaviour
                     activeDashKey = KeyCode.None; // 直後のバグ防止に一旦クリア
                     activeDashKey = KeyCode.LeftArrow;
                     currentSpeed = dashSpeed;
-                    Debug.Log("右ダッシュ開始！");
+                    //Debug.Log("右ダッシュ開始！");
                 }
                 lastDTime = Time.time;
             }
@@ -258,7 +275,7 @@ public class Player2PController : MonoBehaviour
                     activeDashKey = KeyCode.None;
                     activeDashKey = KeyCode.RightArrow;
                     currentSpeed = dashSpeed;
-                    Debug.Log("左ダッシュ開始！");
+                    //Debug.Log("左ダッシュ開始！");
                 }
                 lastATime = Time.time;
             }
@@ -278,7 +295,7 @@ public class Player2PController : MonoBehaviour
                     {
                         gofry = true;
                     }
-                    Debug.Log("飛行開始！");
+                    //Debug.Log("飛行開始！");
                 }
                 lastUpTime = Time.time;
             }
@@ -292,31 +309,54 @@ public class Player2PController : MonoBehaviour
         {
 
             
-            if (normal == true)
+            if (normal == true && hasGrown == true)
             {
                 if (collision.TryGetComponent<attack_1P>(out var ToDamage))
                 {
                     ToDamage.ToDamage_1P(attack_powar);
-                    Debug.Log("ダメージ成功");
+                    //Debug.Log("ダメージ成功a");
 
                     goattack_2P = false;
                     normal = false;
                 }
             }
            
-            else if (strong == true)
+            else if (strong == true && hasGrown == true)
             {
                 if (collision.TryGetComponent<attack_1P>(out var ToDamage))
                 {
                     ToDamage.ToDamage_1P_strong(attack_powar);
-                    Debug.Log("ダメージ成功");
+                    //Debug.Log("ダメージ成功");
 
                     goattack_2P = false;
                     strong = false;
                 }
 
             }
-            
+            else if (normal == true && hasGrown == false)
+            {
+                if (collision.TryGetComponent<attack_1P>(out var ToDamage))
+                {
+                    ToDamage.ToDamage_1P_baby(attack_powar);
+                    //Debug.Log("ダメージ成功");
+                    // play_SE.PlayOneShot(normal_SE);
+                    goattack_2P = false;
+                    normal = false;
+                    //Debug.Log("omaeyowai");
+                }
+            }
+            else if (strong == true && hasGrown == false)
+            {
+                if (collision.TryGetComponent<attack_1P>(out var ToDamage))
+                {
+                    ToDamage.ToDamage_1P_strong_baby(attack_powar);
+                    //Debug.Log("ダメージ成功");
+                    // play_SE.PlayOneShot(strong_SE);
+                    goattack_2P = false;
+                    strong = false;
+                }
+            }
+
         }
         else
         {
@@ -325,6 +365,13 @@ public class Player2PController : MonoBehaviour
             
             //Debug.Log("敵が見つかりませんでした。");
         }
+    }
+
+    void growth()
+    {
+        hasGrown = true;
+        float directionX = Mathf.Sign(transform.localScale.x);
+        transform.localScale = new Vector3(1.2f * directionX, 1.2f, 1.2f);
     }
 
 }

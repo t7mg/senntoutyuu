@@ -1,12 +1,17 @@
 using UnityEngine;
 
-public class CharacterManager_2P : MonoBehaviour
+public class CharacterManager_1P : MonoBehaviour
 {
     //カウントダウンスクリプトを参照するための変数
     [SerializeField] private Countdown countdownScript;
     [Header("キャラクターの登録")]
     public GameObject characterA;
     public GameObject characterB;
+    public GameObject notbattle1;
+    public GameObject notbattle2;
+    public GameObject notbattle3;
+    public GameObject notbattle4;
+   
 
     private GameObject currentCharacter;
 
@@ -15,6 +20,12 @@ public class CharacterManager_2P : MonoBehaviour
         // 初期状態を設定（Aを表示、Bを非表示）
         characterA.SetActive(true);
         characterB.SetActive(false);
+        notbattle1.SetActive(false);
+        notbattle2.SetActive(false);
+        notbattle3.SetActive(false);
+        notbattle4.SetActive(false);
+        
+       
         currentCharacter = characterA;
     }
 
@@ -26,10 +37,10 @@ public class CharacterManager_2P : MonoBehaviour
             return;
         }
         // E キーが押されたら交代処理を呼ぶ
-        if (Input.GetKeyDown(KeyCode.RightControl))
+        if (Input.GetKeyDown(KeyCode.E))
         {
             SwitchCharacter();
-            Debug.Log("キャラクター変更");
+            //Debug.Log("キャラクター変更");
 
         }
     }
@@ -43,26 +54,25 @@ public class CharacterManager_2P : MonoBehaviour
             characterB.transform.position = characterA.transform.position;
             characterB.transform.rotation = characterA.transform.rotation;
 
-            currentCharacter = characterB;
-
             // Aを消してBを出す
             characterA.SetActive(false);
             characterB.SetActive(true);
 
+            currentCharacter = characterB;
+            
             
         }
-        else
+        else if (currentCharacter == characterB) 
         {
             // BからAへ交代
             characterA.transform.position = characterB.transform.position;
             characterA.transform.rotation = characterB.transform.rotation;
 
-            currentCharacter = characterA;
-
             characterB.SetActive(false);
             characterA.SetActive(true);
-
             
+
+            currentCharacter = characterA;
         }
     }
 }

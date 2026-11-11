@@ -15,7 +15,7 @@ public class PlayerController : MonoBehaviour
     public LayerMask groundLayer;//着地できるレイヤー
     bool goJump = false;        //ジャンプ開始フラグ
     bool onGround = false;      //地面フラグ
-    public int attack_powar = 5;       //攻撃力
+    public float attack_powar = 5.0f;       //攻撃力
     //public float HP_1P = 100.0f;               //HP
     bool goattack_1P;                  //攻撃開始フラグ
     bool canattack;
@@ -40,13 +40,26 @@ public class PlayerController : MonoBehaviour
     private KeyCode activeDashKey = KeyCode.None; // ダッシュを維持しているキー
     //private KeyCode activeFryKey = KeyCode.None; // 飛行を維持しているキー
 
+    [Header("成長タイマー設定")]
+    public float growthTimer = 60.0f; // 成長までの時間
+    private bool hasGrown = false; // すでに成長したかどうかのフラグ
 
+
+
+    //SE
+    //public AudioClip normal_SE;
+    //public AudioClip strong_SE;
+
+    AudioSource play_SE;
 
     [SerializeField] private InputAction _inputAction;
     void Start()
     {
         //Rigitbody2Dをとってくる
         rbody = this.GetComponent<Rigidbody2D>();
+
+        //play_SE = GetComponent<AudioSource>();
+
         goattack_1P = false;
         canattack = false;
         currentSpeed = speed; // 初期速度は通常速度
@@ -64,8 +77,19 @@ public class PlayerController : MonoBehaviour
             return;
         }
 
+        
 
-        if (attack_cooltime > 0)
+        // タイマー処理
+        if (!hasGrown)
+        {
+            growthTimer -= Time.deltaTime;
+            if (growthTimer <= 0f)
+            {
+                growth();
+            }
+        }
+
+            if (attack_cooltime > 0)
         {
             attack_cooltime--;
             
@@ -120,17 +144,21 @@ public class PlayerController : MonoBehaviour
         {
             axisH = 0.0f;
         }
+
+        Vector3 currentScale = transform.localScale;
         if (axisH < 0.0f)
         {
             //右移動
 
             transform.localScale = new Vector2(-1, 1);//左右反転
+            transform.localScale = new Vector3(-Mathf.Abs(currentScale.x), currentScale.y, currentScale.z);
         }
         else if (axisH > 0.0f)
         {
             //右移動
 
             transform.localScale = new Vector2(1, 1);//左右反転
+            transform.localScale = new Vector3(Mathf.Abs(currentScale.x), currentScale.y, currentScale.z);
         }
 
         //攻撃（S）の入力チェック
@@ -167,6 +195,8 @@ public class PlayerController : MonoBehaviour
 
     void FixedUpdate()
     {
+      
+
 
         // もしゲームが開始されていなければ、これ以降の移動処理を実行しない
         if (countdownScript != null && !countdownScript.isGameActive)
@@ -223,13 +253,13 @@ public class PlayerController : MonoBehaviour
         {
             case TapInteraction:
                 // TapInteractionの場合は短押し
-                Debug.Log("短押しされたよ！");
+                //Debug.Log("短押しされたよ！");
                 normal = true;
                 break;
 
             case HoldInteraction:
                 // HoldInteractionの場合は長押し
-                Debug.Log("長押しされたよ！");
+                //Debug.Log("長押しされたよ！");
                 
                 strong = true;
                
@@ -251,7 +281,7 @@ public class PlayerController : MonoBehaviour
                 isDashing = false;
                 activeDashKey = KeyCode.None;
                 currentSpeed = speed;
-                Debug.Log("通常移動に戻りました");
+                //Debug.Log("通常移動に戻りました");
             }
         }
         else
@@ -265,7 +295,7 @@ public class PlayerController : MonoBehaviour
                     activeDashKey = KeyCode.None; // 直後のバグ防止に一旦クリア
                     activeDashKey = KeyCode.D;
                     currentSpeed = dashSpeed;
-                    Debug.Log("右ダッシュ開始！");
+                    //Debug.Log("右ダッシュ開始！");
                 }
                 lastDTime = Time.time;
             }
@@ -280,7 +310,7 @@ public class PlayerController : MonoBehaviour
                     activeDashKey = KeyCode.None;
                     activeDashKey = KeyCode.A;
                     currentSpeed = dashSpeed;
-                    Debug.Log("左ダッシュ開始！");
+                    //Debug.Log("左ダッシュ開始！");
                 }
                 lastATime = Time.time;
             }
@@ -301,7 +331,7 @@ public class PlayerController : MonoBehaviour
                     {
                         gofry = true;
                     }
-                        Debug.Log("飛行開始！");
+                        //Debug.Log("飛行開始！");
                 }
                 lastWTime = Time.time;
             }
@@ -318,33 +348,51 @@ public class PlayerController : MonoBehaviour
         if (collision.gameObject.layer == LayerMask.NameToLayer("Player_2") && goattack_1P == true)
         {
 
-
-
-
-
-            if (normal == true)
+            if (normal == true && hasGrown == true)
             {
                 if (collision.TryGetComponent<attack_2P>(out var ToDamage))
                 {
                     ToDamage.ToDamage_2P(attack_powar);
-                    Debug.Log("ダメージ成功");
-
+                    //Debug.Log("ダメージ成功");
+                    //play_SE.PlayOneShot(normal_SE);
                     goattack_1P = false;
                     normal = false;
                 }
             }
-            else if (strong == true)
+            else if (strong == true && hasGrown == true)
             {
                 if (collision.TryGetComponent<attack_2P>(out var ToDamage))
                 {
                     ToDamage.ToDamage_2P_strong(attack_powar);
-                    Debug.Log("ダメージ成功");
-
+                    //Debug.Log("ダメージ成功");
+                   // play_SE.PlayOneShot(strong_SE);
                     goattack_1P = false;
                     strong = false;
                 }
             }
-            
+            else if (normal == true && hasGrown == false)
+            {
+                if (collision.TryGetComponent<attack_2P>(out var ToDamage))
+                {
+                    ToDamage.ToDamage_2P_baby(attack_powar);
+                    //Debug.Log("ダメージ成功");
+                   // play_SE.PlayOneShot(normal_SE);
+                    goattack_1P = false;
+                    normal = false;
+                }
+            }
+            else if (strong == true && hasGrown == false)
+            {
+                if (collision.TryGetComponent<attack_2P>(out var ToDamage))
+                {
+                    ToDamage.ToDamage_2P_strong_baby(attack_powar);
+                    //Debug.Log("ダメージ成功");
+                   // play_SE.PlayOneShot(strong_SE);
+                    goattack_1P = false;
+                    strong = false;
+                }
+            }
+
 
         }
         else
@@ -353,6 +401,13 @@ public class PlayerController : MonoBehaviour
             //Debug.Log("敵が見つかりませんでした。");
         }
 
+    }
+
+    void growth()
+    {
+        hasGrown = true;
+        float directionX = Mathf.Sign(transform.localScale.x);
+        transform.localScale = new Vector3(1.2f * directionX, 1.5f, 1.5f);
     }
 }
 

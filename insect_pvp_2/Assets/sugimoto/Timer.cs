@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class TimeCounter : MonoBehaviour
+public class Timer : MonoBehaviour
 {
     public int countdownMinutes = 3;
     private float countdownSeconds;
