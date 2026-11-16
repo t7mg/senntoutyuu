@@ -21,8 +21,13 @@ public class Player2PController_batta : MonoBehaviour
     public float attack_cooltime;   //攻撃クールタイム
     public float Max_attack_cooltime = 300.0f;
     bool normal = false;
-    bool strong = false;
-    public float strong_cooltime = 300.0f;
+    public bool strong = false;
+    public float strong_cooltime = 5.0f;
+    public float currentstrong_cooltime = 5.0f;
+    public float DashAttack = 30.0f;
+    public bool CanMove = true;
+    bool right = false;
+    bool left = true;
 
     [Header("ダッシュ設定")]
     public float dashSpeed = 6.0f;             // ダッシュ時の移動速度
@@ -53,6 +58,7 @@ public class Player2PController_batta : MonoBehaviour
         canattack = false;
         currentSpeed = speed; // 初期速度は通常速度
         attack_cooltime = Max_attack_cooltime;
+        currentstrong_cooltime = strong_cooltime;
     }
 
     // Update is called once per frame
@@ -91,12 +97,22 @@ public class Player2PController_batta : MonoBehaviour
 
         }
 
-        //地上判定
-        onGround = Physics2D.CircleCast(transform.position, //発射位置
-                                        0.2f,               //円の半径
-                                        Vector2.down,       //発射方向
-                                        0.0f,               //発射距離
-                                        groundLayer);            //検出するレイヤー
+        if (strong == true)
+        {
+            currentstrong_cooltime--;
+            CanMove = false;
+        }
+        else if (strong == false)
+        {
+            CanMove = true;
+        }
+
+            //地上判定
+            onGround = Physics2D.CircleCast(transform.position, //発射位置
+                                            0.2f,               //円の半径
+                                            Vector2.down,       //発射方向
+                                            0.0f,               //発射距離
+                                            groundLayer);            //検出するレイヤー
 
         if (Input.GetKey(KeyCode.UpArrow))
         {
@@ -111,19 +127,25 @@ public class Player2PController_batta : MonoBehaviour
         }
 
         HandleDashInput();
-
-        //水平方向の入力をチェックする
-        if (Input.GetKey(KeyCode.LeftArrow))
+        if (CanMove == true)
         {
-            axisH = -1.0f;
-        }
-        else if (Input.GetKey(KeyCode.RightArrow))
-        {
-            axisH = 1.0f;
-        }
-        else
-        {
-            axisH = 0.0f;
+            //水平方向の入力をチェックする
+            if (Input.GetKey(KeyCode.LeftArrow))
+            {
+                axisH = -1.0f;
+                right = false;
+                left = true;
+            }
+            else if (Input.GetKey(KeyCode.RightArrow))
+            {
+                axisH = 1.0f;
+                right = true;
+                left = false;
+            }
+            else
+            {
+                axisH = 0.0f;
+            }
         }
 
         Vector3 currentScale = transform.localScale;
@@ -164,10 +186,25 @@ public class Player2PController_batta : MonoBehaviour
 
         }
 
+        if (strong == true && right == true)
+        {
+            this.transform.Translate(Vector3.right * Time.deltaTime * DashAttack);
+        }
+        else if (strong == true && left == true)
+        {
+            this.transform.Translate(Vector3.left * Time.deltaTime * DashAttack);
+        }
+
         if (attack_cooltime == Max_attack_cooltime - 5)
         {
             canattack = false;
             goattack_2P = false;
+        }
+
+        if (currentstrong_cooltime <= 0)
+        {
+            strong = false;
+            currentstrong_cooltime = strong_cooltime;
         }
     }
 
@@ -305,11 +342,11 @@ public class Player2PController_batta : MonoBehaviour
     private void OnTriggerStay2D(Collider2D collision)
     {
 
-        if (collision.gameObject.layer == LayerMask.NameToLayer("Player_1") && goattack_2P == true)
+        if (collision.gameObject.layer == LayerMask.NameToLayer("Player_1") && goattack_2P == true && normal == true)
         {
 
 
-            if (normal == true && hasGrown == true)
+            if (hasGrown == true)
             {
                 if (collision.TryGetComponent<attack_1P>(out var ToDamage))
                 {
@@ -321,7 +358,31 @@ public class Player2PController_batta : MonoBehaviour
                 }
             }
 
-            else if (strong == true && hasGrown == true)
+
+            else if (hasGrown == false)
+            {
+                if (collision.TryGetComponent<attack_1P>(out var ToDamage))
+                {
+                    ToDamage.ToDamage_1P_baby(attack_powar);
+                    //Debug.Log("ダメージ成功");
+                    // play_SE.PlayOneShot(normal_SE);
+                    goattack_2P = false;
+                    normal = false;
+                  
+                }
+            }
+            else
+            {
+
+                goattack_2P = false;
+
+                //Debug.Log("敵が見つかりませんでした。");
+            }
+        }
+
+        if (collision.gameObject.layer == LayerMask.NameToLayer("Player_1")&& strong == true)
+        {
+            if (strong == true && hasGrown == true)
             {
                 if (collision.TryGetComponent<attack_1P>(out var ToDamage))
                 {
@@ -333,18 +394,7 @@ public class Player2PController_batta : MonoBehaviour
                 }
 
             }
-            else if (normal == true && hasGrown == false)
-            {
-                if (collision.TryGetComponent<attack_1P>(out var ToDamage))
-                {
-                    ToDamage.ToDamage_1P_baby(attack_powar);
-                    //Debug.Log("ダメージ成功");
-                    // play_SE.PlayOneShot(normal_SE);
-                    goattack_2P = false;
-                    normal = false;
-                    //Debug.Log("omaeyowai");
-                }
-            }
+
             else if (strong == true && hasGrown == false)
             {
                 if (collision.TryGetComponent<attack_1P>(out var ToDamage))
@@ -358,13 +408,12 @@ public class Player2PController_batta : MonoBehaviour
             }
 
         }
-        else
+
+        if (collision.gameObject.CompareTag("Wall"))
         {
-
-            goattack_2P = false;
-
-            //Debug.Log("敵が見つかりませんでした。");
+            strong = false;
         }
+
     }
 
     void growth()

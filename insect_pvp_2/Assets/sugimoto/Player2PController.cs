@@ -3,6 +3,8 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.InputSystem.Interactions;
 using UnityEngine.UIElements;
+using System.Collections;
+
 
 public class Player2PController : MonoBehaviour
 {
@@ -21,8 +23,12 @@ public class Player2PController : MonoBehaviour
     public float attack_cooltime;   //攻撃クールタイム
     public float Max_attack_cooltime = 300.0f;
     bool normal = false;
-    bool strong = false;
+    public bool strong = false;
     public float strong_cooltime = 300.0f;
+    public float stan_cooltime = 300.0f;
+    public float current_stan_cooltime;
+
+    public GameObject getstan1P;
 
     [Header("ダッシュ設定")]
     public float dashSpeed = 6.0f;             // ダッシュ時の移動速度
@@ -39,8 +45,24 @@ public class Player2PController : MonoBehaviour
 
     [Header("成長タイマー設定")]
     public float growthTimer = 60.0f; // 成長までの時間
-    private bool hasGrown = false; // すでに成長したかどうかのフラグ
+    private bool hasGrown = false; // すでに成長したかどうかのフラグ7
 
+    public bool getstan = true;
+
+    [Header("ノックバック設定")]
+    public float knockbackForce = 7.0f; // ノックバックの左右への強さ
+    public float knockbackUpForce = 3.0f; // ノックバック時に少し浮き上がる強さ
+    public float knockbackDuration = 0.4f; // 空中での操作不能時間（秒）
+    public float landStunDuration = 1.0f; // 着地後の硬直時間（秒）
+    public float invincibleDuration = 3.0f; //スタン復帰後の無敵時間（秒）
+
+    [Header("ノックバック・スタン設定")]
+    public bool isStopped = false;             // スタン中フラグ
+    public bool isInvincible = false;          // 無敵時間フラグ
+    private bool hasLandedDuringKnockback = false; // ノックバック中の着地フラグ
+
+    public float diveBounceForceX = 4.0f;      // 敵を踏んだあとに後ろに下がる強さ
+    public float diveBounceForceY = 6.0f;      // 敵を踏んだあとに上に跳ね上がる強さ
 
 
     [SerializeField] private InputAction _inputAction;
@@ -53,6 +75,9 @@ public class Player2PController : MonoBehaviour
         canattack = false;
         currentSpeed = speed; // 初期速度は通常速度
         attack_cooltime = Max_attack_cooltime;
+        getstan = GameObject.Find("kabutomusi_0");
+        current_stan_cooltime = stan_cooltime;
+
     }
 
     // Update is called once per frame
@@ -74,6 +99,13 @@ public class Player2PController : MonoBehaviour
             }
         }
 
+        if(getstan1P.GetComponent<PlayerController>().CanStun == true)
+        {
+            isStopped = true;
+            getstan = false;
+        }
+
+
         if (attack_cooltime > 0)
         {
             attack_cooltime--;
@@ -91,12 +123,30 @@ public class Player2PController : MonoBehaviour
 
         }
 
+        if (isStopped == true)
+        {
+            current_stan_cooltime--;
+        }
+        if (current_stan_cooltime < 0)
+        {
+            isStopped = false;
+            getstan = true;
+            current_stan_cooltime = stan_cooltime;
+        }
+
         //地上判定
         onGround = Physics2D.CircleCast(transform.position, //発射位置
                                         0.2f,               //円の半径
                                         Vector2.down,       //発射方向
                                         0.0f,               //発射距離
                                         groundLayer);            //検出するレイヤー
+
+        if (isStopped)
+        {
+            axisH = 0f;
+            return;
+        }
+
 
         if (Input.GetKey(KeyCode.UpArrow))
         {
@@ -135,7 +185,7 @@ public class Player2PController : MonoBehaviour
             transform.localScale = new Vector3(-Mathf.Abs(currentScale.x), currentScale.y, currentScale.z);
         }
         else if (axisH < 0.0f)
-        { 
+        {
             //右移動
             // Debug.Log("左移動");
             transform.localScale = new Vector2(-1, 1);//左右反転
@@ -161,7 +211,7 @@ public class Player2PController : MonoBehaviour
         else
         {
             canattack = false;
-            
+
         }
 
         if (attack_cooltime == Max_attack_cooltime - 5)
@@ -169,6 +219,8 @@ public class Player2PController : MonoBehaviour
             canattack = false;
             goattack_2P = false;
         }
+
+        
     }
 
     void FixedUpdate()
@@ -304,11 +356,12 @@ public class Player2PController : MonoBehaviour
 
     private void OnTriggerStay2D(Collider2D collision)
     {
+        PlayerController p1Script = this.gameObject.GetComponent<PlayerController>();
 
         if (collision.gameObject.layer == LayerMask.NameToLayer("Player_1") && goattack_2P == true)
         {
 
-            
+
             if (normal == true && hasGrown == true)
             {
                 if (collision.TryGetComponent<attack_1P>(out var ToDamage))
@@ -320,7 +373,7 @@ public class Player2PController : MonoBehaviour
                     normal = false;
                 }
             }
-           
+
             else if (strong == true && hasGrown == true)
             {
                 if (collision.TryGetComponent<attack_1P>(out var ToDamage))
@@ -360,11 +413,15 @@ public class Player2PController : MonoBehaviour
         }
         else
         {
-            
+
             goattack_2P = false;
-            
+
             //Debug.Log("敵が見つかりませんでした。");
         }
+
+
+
+
     }
 
     void growth()
@@ -373,5 +430,117 @@ public class Player2PController : MonoBehaviour
         float directionX = Mathf.Sign(transform.localScale.x);
         transform.localScale = new Vector3(1.2f * directionX, 1.2f, 1.2f);
     }
+
+    //// 2Pから呼び出されるノックバックの受付メソッド
+    //public void ApplyKnockback(float directionX, float forceX, float forceY, float duration, float stunDur, float invincDur)
+    //{
+    //    // 自分がすでに操作不能、または無敵時間中ならノックバックを無視する
+    //    if (!isStopped && !isInvincible)
+    //    {
+    //        // 落下攻撃中にノックバックを食らった場合は、落下攻撃状態を強制解除
+
+    //        StartCoroutine(KnockbackRoutine(directionX, forceX, forceY, duration, stunDur, invincDur));
+    //    }
+    //}
+
+    //// ノックバックして一定時間操作不能＆傾けるコルーチン
+    //private IEnumerator KnockbackRoutine(float directionX, float forceX, float forceY, float duration, float stunDur, float invincDur)
+    //{
+    //    isStopped = true;
+    //    hasLandedDuringKnockback = false; // 着地フラグをリセット
+    //    axisH = 0f;
+    //    goJump = false;
+    //    goattack_2P = false;
+    //    // 初期ノックバック（上向きと横向きに弾き飛ばす）
+    //    rbody.linearVelocity = Vector2.zero;
+    //    Vector2 force = new Vector2(directionX * forceX, forceY);
+    //    rbody.AddForce(force, ForceMode2D.Impulse);
+    //    // プレイヤーの画像をZ軸を中心に45度傾ける
+    //    transform.rotation = Quaternion.Euler(0, 0, 45f);
+    //    // 地面に着地するか、通常の空中ノックバック時間が終わるまでループ待機
+    //    float timer = 0f;
+    //    while (timer < duration && !hasLandedDuringKnockback)
+    //    {
+    //        timer += Time.deltaTime;
+    //        yield return null;
+    //    }
+    //    // もし上のループが「着地」によって抜けた場合
+    //    if (hasLandedDuringKnockback)
+    //    {
+    //        // 着地後の硬直カウント開始
+    //        yield return new WaitForSeconds(stunDur);
+    //    }
+    //    // プレイヤーの角度を 0度（元通り）に戻す
+    //    transform.rotation = Quaternion.Euler(0, 0, 0);
+       
+    //}
+    //// 一定時間スタン（ノックバック）が効かなくなるコルーチン
+    
+
+    //// ノックバック中の着地検知
+    //private void OnCollisionEnter2D(Collision2D other)
+    //{
+    //    //落下攻撃中に敵当たった場合
+    //    if ((other.gameObject.CompareTag("1P") || other.gameObject.layer == LayerMask.NameToLayer("1P")))
+    //    {
+    //        float currentDirX = -Mathf.Sign(transform.localScale.x);
+
+    //        PlayerController p2Script = other.gameObject.GetComponent<PlayerController>();
+    //        if (p2Script != null)
+    //        {
+    //            // 1Pの向き（currentDirX）と同じ方向へ2Pを吹き飛ばす
+    //            float launchDirection = currentDirX;
+
+    //            // 吹き飛ばす横の力、浮かせる縦の力、着地後の硬直秒数
+    //            p2Script.ApplyDiveHitKnockback(launchDirection);
+
+
+    //        }
+
+
+    //        isStopped = false;
+
+    //        // ぶつかった瞬間の速度を一度完全にリセット
+    //        rbody.linearVelocity = Vector2.zero;
+
+    //        // 跳ね返る方向は、進んでいた方向（currentDirX）の「逆」
+    //        float bounceDirection = -currentDirX;
+
+    //        Vector2 bounceVector = new Vector2(bounceDirection * diveBounceForceX, diveBounceForceY);
+    //        rbody.AddForce(bounceVector, ForceMode2D.Impulse);
+
+    //        return;
+
+    //    }
+
+    //    // 既存のノックバック中の着地判定
+    //    if (isStopped && !hasLandedDuringKnockback && ((1 << other.gameObject.layer) & groundLayer) != 0)
+    //    {
+    //        hasLandedDuringKnockback = true;
+    //        rbody.linearVelocity = new Vector2(0f, rbody.linearVelocity.y);
+    //    }
+    //}
+
+    ////TapOrHoldExampleから短押しされた時に呼び出されるメソッド
+    //public void OnAttackInputPressed()
+    //{
+    //    // 操作不能（スタン中など）なら入力を受け付けない
+    //    if (isStopped) return;
+
+    //    if (onGround)
+    //    {
+    //        // 地上にいるときは通常攻撃
+    //        goattack_2P = true;
+    //        Debug.Log("地上通常攻撃");
+    //    }
+    //    else
+    //    {
+    //        // 空中にいるときは、Wキーが押されていても無視して落下攻撃を発動
+            
+    //        isStopped = true; // 落下中は通常の左右移動やジャンプを受け付けない
+    //        goJump = false;   // 空中でのジャンプ予約を強制クリア
+    //        Debug.Log("空中落下攻撃");
+    //    }
+    //}
 
 }

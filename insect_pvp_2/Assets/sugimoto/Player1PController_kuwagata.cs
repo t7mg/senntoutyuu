@@ -22,7 +22,7 @@ public class Player1PController_kuwagata : MonoBehaviour
     public float attack_cooltime;    //攻撃クールタイム
     public float Max_attack_cooltime = 300.0f;
     bool normal = false;
-    bool strong = false;
+    public bool strong = false;
     public float strong_cooltime = 300.0f;
 
     [Header("ダッシュ、飛行設定")]

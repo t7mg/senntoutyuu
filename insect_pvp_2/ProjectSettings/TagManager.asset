@@ -7,6 +7,7 @@ TagManager:
   - 1P
   - 2P
   - attack
+  - Wall
   layers:
   - Default
   - TransparentFX
@@ -20,7 +21,7 @@ TagManager:
   - 2P
   - Player_1
   - Player_2
-  - 
+  - Wall
   - 
   - 
   - 

@@ -3,6 +3,9 @@ using UnityEngine;
 using UnityEngine.UIElements;
 using UnityEngine.InputSystem;
 using UnityEngine.InputSystem.Interactions;
+using System.Diagnostics.Tracing;
+using System.Collections;
+using static UnityEngine.RuleTile.TilingRuleOutput;
 
 
 public class PlayerController : MonoBehaviour
@@ -22,8 +25,12 @@ public class PlayerController : MonoBehaviour
     public float attack_cooltime;    //攻撃クールタイム
     public float Max_attack_cooltime = 300.0f;
     bool normal = false;
-    bool strong = false;
-    public float strong_cooltime = 300.0f;
+    public bool strong = false;
+    public float strong_cooltime = 5.0f;
+    public float currentstrong_cooltime = 5.0f;
+    public float DashAttack = 10.0f;
+    public bool CanMove = true;
+    public bool CanStun = false;
 
     [Header("ダッシュ、飛行設定")]
     public float dashSpeed = 6.0f;             // ダッシュ時の移動速度
@@ -44,10 +51,24 @@ public class PlayerController : MonoBehaviour
     public float growthTimer = 60.0f; // 成長までの時間
     private bool hasGrown = false; // すでに成長したかどうかのフラグ
 
+    [Header("ノックバック設定")]
+    public float knockbackForce = 7.0f; // ノックバックの左右への強さ
+    public float knockbackUpForce = 3.0f; // ノックバック時に少し浮き上がる強さ
+    public float knockbackDuration = 0.4f; // 空中での操作不能時間（秒）
+    public float landStunDuration = 1.0f; // 着地後の硬直時間（秒）
+    public float invincibleDuration = 3.0f; //スタン復帰後の無敵時間（秒）
+                                            // 操作不能・無敵フラグ
+    private bool isStopped = false;
 
+    [Header("ダイブ被弾時のノックバック設定")]
+    [SerializeField] private float diveKnockbackForceX = 5f;   // 横方向の吹き飛び力
+    [SerializeField] private float diveKnockbackForceY = 8f;   // 上方向の吹き飛び力
+    [SerializeField] private float diveStunDuration = 1.0f;    // 着地後の硬直時間
+
+    public GameObject getstan2P;
 
     //SE
-    //public AudioClip normal_SE;
+      public AudioClip normal_SE;
     //public AudioClip strong_SE;
 
     AudioSource play_SE;
@@ -58,13 +79,14 @@ public class PlayerController : MonoBehaviour
         //Rigitbody2Dをとってくる
         rbody = this.GetComponent<Rigidbody2D>();
 
-        //play_SE = GetComponent<AudioSource>();
+        play_SE = GetComponent<AudioSource>();
 
         goattack_1P = false;
         canattack = false;
         currentSpeed = speed; // 初期速度は通常速度
         attack_cooltime = Max_attack_cooltime;
-
+        currentstrong_cooltime = strong_cooltime;
+        getstan2P = GameObject.Find("kabutomusi - 2P");
 
     }
 
@@ -79,6 +101,7 @@ public class PlayerController : MonoBehaviour
 
         
 
+
         // タイマー処理
         if (!hasGrown)
         {
@@ -89,7 +112,7 @@ public class PlayerController : MonoBehaviour
             }
         }
 
-            if (attack_cooltime > 0)
+        if (attack_cooltime > 0)
         {
             attack_cooltime--;
             
@@ -105,14 +128,20 @@ public class PlayerController : MonoBehaviour
             I_can_fry++;
 
         }
-       
+
+        if (getstan2P.GetComponent<Player2PController>().getstan == false)
+        {
+            CanStun = false;
+        }
+
+
 
         //地上判定
         onGround = Physics2D.CircleCast(transform.position, //発射位置
-                                        0.2f,               //円の半径
-                                        Vector2.down,       //発射方向
-                                        0.0f,               //発射距離
-                                        groundLayer);       //検出するレイヤー
+                                            0.2f,               //円の半径
+                                            Vector2.down,       //発射方向
+                                            0.0f,               //発射距離
+                                            groundLayer);       //検出するレイヤー
 
         
 
@@ -129,21 +158,23 @@ public class PlayerController : MonoBehaviour
         }
 
         HandleDashInput();
-        
 
-        //A,Dの入力をチェックする
-        if (Input.GetKey(KeyCode.A))
-        {
-            axisH = -1.0f;
-        }
-        else if (Input.GetKey(KeyCode.D))
-        {
-            axisH = 1.0f;
-        }
-        else
-        {
-            axisH = 0.0f;
-        }
+
+        
+            //A,Dの入力をチェックする
+            if (Input.GetKey(KeyCode.A))
+            {
+                axisH = -1.0f;
+            }
+            else if (Input.GetKey(KeyCode.D))
+            {
+                axisH = 1.0f;
+            }
+            else
+            {
+                axisH = 0.0f;
+            }
+        
 
         Vector3 currentScale = transform.localScale;
         if (axisH < 0.0f)
@@ -185,12 +216,21 @@ public class PlayerController : MonoBehaviour
             
         }
 
-        if(attack_cooltime == Max_attack_cooltime -5)
+        
+       
+
+        if (attack_cooltime == Max_attack_cooltime - 5)
         {
-            canattack = false ;
+            canattack = false;
             goattack_1P = false;
         }
 
+        if(currentstrong_cooltime <= 0)
+        {
+            strong = false;
+            CanStun = false;
+            currentstrong_cooltime = strong_cooltime;
+        }
     }
 
     void FixedUpdate()
@@ -338,67 +378,94 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    
+    //private void OnCollisionEnter2D(Collision2D other)
+    //{
+    //    // ぶつかった相手のタグが "Player"（2P）の場合
+    //    if (other.gameObject.CompareTag("2P"))
+    //    {
+    //        if (isStopped && ((1 << other.gameObject.layer) & groundLayer) != 0)
+    //        {
+    //            rbody.linearVelocity = new Vector2(0f, rbody.linearVelocity.y);
+    //        }
+    //        Player2PController p1Script = other.gameObject.GetComponent<Player2PController>();
 
 
+    //        // --- ノックバック処理は確率に関係なく毎回行う場合 ---
+    //        float directionX = other.transform.position.x - transform.position.x;
+    //        float knockbackDirection = directionX > 0 ? 1f : -1f;
+    //        p1Script.ApplyKnockback(knockbackDirection, knockbackForce, knockbackUpForce, knockbackDuration, landStunDuration, invincibleDuration);
+    //    }
+    //}
 
     private void OnTriggerStay2D(Collider2D collision)
     {
 
-        if (collision.gameObject.layer == LayerMask.NameToLayer("Player_2") && goattack_1P == true)
+        if (collision.gameObject.layer == LayerMask.NameToLayer("Player_2") && goattack_1P == true && normal == true)
         {
 
-            if (normal == true && hasGrown == true)
+            if (hasGrown == true)
             {
                 if (collision.TryGetComponent<attack_2P>(out var ToDamage))
                 {
                     ToDamage.ToDamage_2P(attack_powar);
                     //Debug.Log("ダメージ成功");
-                    //play_SE.PlayOneShot(normal_SE);
+                    play_SE.PlayOneShot(normal_SE);
                     goattack_1P = false;
                     normal = false;
                 }
             }
-            else if (strong == true && hasGrown == true)
+            else if (hasGrown == false)
             {
                 if (collision.TryGetComponent<attack_2P>(out var ToDamage))
                 {
-                    ToDamage.ToDamage_2P_strong(attack_powar);
-                    //Debug.Log("ダメージ成功");
-                   // play_SE.PlayOneShot(strong_SE);
-                    goattack_1P = false;
-                    strong = false;
-                }
-            }
-            else if (normal == true && hasGrown == false)
-            {
-                if (collision.TryGetComponent<attack_2P>(out var ToDamage))
-                {
+                    
                     ToDamage.ToDamage_2P_baby(attack_powar);
                     //Debug.Log("ダメージ成功");
-                   // play_SE.PlayOneShot(normal_SE);
+                    play_SE.PlayOneShot(normal_SE);
                     goattack_1P = false;
                     normal = false;
                 }
             }
-            else if (strong == true && hasGrown == false)
-            {
-                if (collision.TryGetComponent<attack_2P>(out var ToDamage))
-                {
-                    ToDamage.ToDamage_2P_strong_baby(attack_powar);
-                    //Debug.Log("ダメージ成功");
-                   // play_SE.PlayOneShot(strong_SE);
-                    goattack_1P = false;
-                    strong = false;
-                }
-            }
+            
 
 
         }
         else
         {
             goattack_1P = false;
+            
             //Debug.Log("敵が見つかりませんでした。");
+        }
+
+        if(collision.gameObject.layer == LayerMask.NameToLayer("Player_2")&&strong == true)
+        {
+           
+            if (strong == true && hasGrown == true)
+            {
+                if (collision.TryGetComponent<attack_2P>(out var ToDamage))
+                {
+
+                    ToDamage.ToDamage_2P_strong(attack_powar);
+                    //Debug.Log("ダメージ成功");
+                    // play_SE.PlayOneShot(strong_SE);
+                    goattack_1P = false;
+                    strong = false;
+                    CanStun = true;
+                }
+            }
+            else if (strong == true && hasGrown == false)
+            {
+                if (collision.TryGetComponent<attack_2P>(out var ToDamage))
+                {
+                    
+                    ToDamage.ToDamage_2P_strong_baby(attack_powar);
+                    Debug.Log("ダメージ成功");
+                    // play_SE.PlayOneShot(strong_SE);
+                    goattack_1P = false;
+                    strong= false;
+                    CanStun = true;
+                }
+            }
         }
 
     }
@@ -409,6 +476,43 @@ public class PlayerController : MonoBehaviour
         float directionX = Mathf.Sign(transform.localScale.x);
         transform.localScale = new Vector3(1.2f * directionX, 1.5f, 1.5f);
     }
+
+    //public void ApplyDiveHitKnockback(float directionX)
+    //{
+    //    // すでに操作不能（スタン中）なら重複して食らわない
+    //    if (!isStopped)
+    //    {
+    //        StartCoroutine(DiveHitKnockbackRoutine(directionX));
+    //    }
+    //}
+
+    //// 2Pがノックバックして吹き飛び、着地後に硬直するコルーチン
+    //private IEnumerator DiveHitKnockbackRoutine(float directionX)
+    //{
+    //    isStopped = true; // 操作不能（スタン）状態にする
+    //    goJump = false;
+    //    goattack_1P = false;
+
+    //    // インスペクターで設定した値を使って弾き飛ばす
+    //    rbody.linearVelocity = Vector2.zero;
+    //    Vector2 force = new Vector2(directionX * diveKnockbackForceX, diveKnockbackForceY);
+    //    rbody.AddForce(force, ForceMode2D.Impulse);
+
+    //    // 吹き飛び中の角度は -45度 で固定
+    //    transform.rotation = Quaternion.Euler(0, 0, -45f);
+
+    //    // 空中にいる間は待機し、地面に触れるまでループする
+    //    while (isStopped && !onGround)
+    //    {
+    //        yield return null;
+    //    }
+
+       
+    //    // 角度を元に戻し、操作不能を解除する
+    //    transform.rotation = Quaternion.Euler(0, 0, 0);
+    //    isStopped = false;
+    //    Debug.Log("1P：スタンから復帰しました");
+    //}
 }
 
 
