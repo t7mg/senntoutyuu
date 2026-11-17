@@ -17,15 +17,19 @@ public class atkctrlbox1P_kabuto : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (atkbox1P_kabuto.GetComponent<PlayerController>().strong == true)
-        {
-            getattackbox_Normal.SetActive(false);
-            getattackbox_Strong.SetActive(true);
-        }
-        else if (atkbox1P_kabuto.GetComponent<PlayerController>().strong == false)
-        {
-            getattackbox_Normal.SetActive(true);
-            getattackbox_Strong.SetActive(false);
-        }
+        
+
+            if (atkbox1P_kabuto.GetComponent<PlayerController>().strong == true)
+            {
+                getattackbox_Normal.SetActive(false);
+                getattackbox_Strong.SetActive(true);
+            }
+            else if (atkbox1P_kabuto.GetComponent<PlayerController>().strong == false)
+            {
+                getattackbox_Normal.SetActive(true);
+                getattackbox_Strong.SetActive(false);
+            }
+        
+        
     }
 }

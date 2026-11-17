@@ -15,10 +15,7 @@ public class attack_2P : MonoBehaviour
         UpdateHPBar(); // 起動時にHPバーを最大にする
     }
 
-    void Update()
-    {
-       
-    }
+ 
 
     // 相手からの攻撃プログラムから呼び出されるメソッド
     public void ToDamage_2P(float damage)

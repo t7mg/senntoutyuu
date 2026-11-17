@@ -31,6 +31,7 @@ public class PlayerController : MonoBehaviour
     public float DashAttack = 10.0f;
     public bool CanMove = true;
     public bool CanStun = false;
+    public bool Notbattle = false;
 
     [Header("ダッシュ、飛行設定")]
     public float dashSpeed = 6.0f;             // ダッシュ時の移動速度
@@ -96,10 +97,15 @@ public class PlayerController : MonoBehaviour
         // もしゲームが開始されていなければ、これ以降の移動処理を実行しない
         if (countdownScript != null && !countdownScript.isGameActive)
         {
+            Notbattle = true;
             return;
         }
+        else
+        {
+            Notbattle = false;
+        }
 
-        
+
 
 
         // タイマー処理

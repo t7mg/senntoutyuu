@@ -23,6 +23,7 @@ public class Player2PController_hati : MonoBehaviour
     bool normal = false;
     public bool strong = false;
     public float strong_cooltime = 300.0f;
+    public float currentstrong_cooltime = 5.0f;
 
     [Header("ダッシュ設定")]
     public float dashSpeed = 6.0f;             // ダッシュ時の移動速度
@@ -53,6 +54,7 @@ public class Player2PController_hati : MonoBehaviour
         canattack = false;
         currentSpeed = speed; // 初期速度は通常速度
         attack_cooltime = Max_attack_cooltime;
+        currentstrong_cooltime = strong_cooltime;
     }
 
     // Update is called once per frame
@@ -88,6 +90,12 @@ public class Player2PController_hati : MonoBehaviour
         if (I_can_fry < 500.0f && gofry == false)
         {
             I_can_fry++;
+
+        }
+
+        if (strong == true)
+        {
+            currentstrong_cooltime--;
 
         }
 
@@ -168,6 +176,12 @@ public class Player2PController_hati : MonoBehaviour
         {
             canattack = false;
             goattack_2P = false;
+        }
+
+        if (currentstrong_cooltime <= 0)
+        {
+            strong = false;
+            currentstrong_cooltime = strong_cooltime;
         }
     }
 

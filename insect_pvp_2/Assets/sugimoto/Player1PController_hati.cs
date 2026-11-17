@@ -24,6 +24,7 @@ public class Player1PController_hati : MonoBehaviour
     bool normal = false;
     public bool strong = false;
     public float strong_cooltime = 300.0f;
+    public float currentstrong_cooltime = 5.0f;
 
     [Header("ダッシュ、飛行設定")]
     public float dashSpeed = 6.0f;             // ダッシュ時の移動速度
@@ -44,6 +45,12 @@ public class Player1PController_hati : MonoBehaviour
     public float growthTimer = 60.0f; // 成長までの時間
     private bool hasGrown = false; // すでに成長したかどうかのフラグ
 
+    [Header("継続ダメージ設定")]
+    public int poisontimer = 3;
+    public float interval = 1.0f;
+    public int poisondamage = 5;
+
+    private Coroutine dotCoroutine;
 
 
     //SE
@@ -64,7 +71,7 @@ public class Player1PController_hati : MonoBehaviour
         canattack = false;
         currentSpeed = speed; // 初期速度は通常速度
         attack_cooltime = Max_attack_cooltime;
-
+        currentstrong_cooltime = strong_cooltime;
 
     }
 
@@ -106,9 +113,14 @@ public class Player1PController_hati : MonoBehaviour
 
         }
 
+        if (strong == true)
+        {
+            currentstrong_cooltime--;
 
-        //地上判定
-        onGround = Physics2D.CircleCast(transform.position, //発射位置
+        }
+
+            //地上判定
+            onGround = Physics2D.CircleCast(transform.position, //発射位置
                                         0.2f,               //円の半径
                                         Vector2.down,       //発射方向
                                         0.0f,               //発射距離
@@ -189,6 +201,12 @@ public class Player1PController_hati : MonoBehaviour
         {
             canattack = false;
             goattack_1P = false;
+        }
+
+        if (currentstrong_cooltime <= 0)
+        {
+            strong = false;
+            currentstrong_cooltime = strong_cooltime;
         }
 
     }
@@ -390,6 +408,7 @@ public class Player1PController_hati : MonoBehaviour
                 if (collision.TryGetComponent<attack_2P>(out var ToDamage))
                 {
                     ToDamage.ToDamage_2P_strong_baby(attack_powar);
+                   
                     //Debug.Log("ダメージ成功");
                     // play_SE.PlayOneShot(strong_SE);
                     goattack_1P = false;

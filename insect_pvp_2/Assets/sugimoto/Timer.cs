@@ -3,18 +3,19 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
 
 public class Timer : MonoBehaviour
 {
     public int countdownMinutes = 3;
     private float countdownSeconds;
-    private Text timeText;
+    private TextMeshProUGUI timeText;
 
     [SerializeField] private Countdown countdownScript;
 
     private void Start()
     {
-        timeText = GetComponent<Text>();
+        timeText = GetComponent<TextMeshProUGUI>();
         countdownSeconds = countdownMinutes * 60;
 
         //ゲーム開始前に、最初のタイマー表示（3:00）を画面に反映しておく
