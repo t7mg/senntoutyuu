@@ -15,6 +15,7 @@ public class Player2PController_kuwagata : MonoBehaviour
     bool goJump = false;        //ジャンプ開始フラグ
     bool onGround = false;      //地面フラグ
     public float attack_powar = 5.0f;       //攻撃力
+    public float airNattack_powar = 10.0f;   //落下攻撃力
     //public float HP_2P = 100.0f;               //HP
     bool goattack_2P;                  //攻撃開始フラグ
     bool canattack;
@@ -22,7 +23,12 @@ public class Player2PController_kuwagata : MonoBehaviour
     public float Max_attack_cooltime = 300.0f;
     bool normal = false;
     public bool strong = false;
-    public float strong_cooltime = 300.0f;
+    public bool aerial_attack = false;
+    public float DashAttack = 30.0f;
+    public bool CanMove = true;
+    public bool cannot_airN = false;
+    public float airN_cooltime = 100.0f;
+    public float currentairN_cooltime = 100.0f;
 
     [Header("ダッシュ設定")]
     public float dashSpeed = 6.0f;             // ダッシュ時の移動速度
@@ -53,6 +59,7 @@ public class Player2PController_kuwagata : MonoBehaviour
         canattack = false;
         currentSpeed = speed; // 初期速度は通常速度
         attack_cooltime = Max_attack_cooltime;
+        currentairN_cooltime = airN_cooltime;
     }
 
     // Update is called once per frame
@@ -89,6 +96,20 @@ public class Player2PController_kuwagata : MonoBehaviour
         {
             I_can_fry++;
 
+        }
+        if (cannot_airN == true)
+        {
+            currentairN_cooltime--;
+            CanMove = false;
+        }
+        else if (strong == false)
+
+        {
+            CanMove = true;
+        }
+        if (aerial_attack == true)
+        {
+            normal = false;
         }
 
         //地上判定
@@ -169,6 +190,26 @@ public class Player2PController_kuwagata : MonoBehaviour
             canattack = false;
             goattack_2P = false;
         }
+        if (gofry == true && Input.GetKeyDown(KeyCode.DownArrow)&& cannot_airN == false)
+        {
+            aerial_attack = true;
+            goattack_2P = true;
+            cannot_airN = true;
+        }
+
+
+        if (aerial_attack == true)
+        {
+            gofry = false;
+            this.transform.Translate(Vector3.down * Time.deltaTime * DashAttack);
+            //Debug.Log("aerial");
+        }
+        if (currentairN_cooltime <= 0)
+        {
+
+            currentairN_cooltime = airN_cooltime;
+            cannot_airN = false;
+        }
     }
 
     void FixedUpdate()
@@ -187,6 +228,13 @@ public class Player2PController_kuwagata : MonoBehaviour
         if (onGround)
         {
             gofry = false;
+        }
+        if (onGround == true && aerial_attack == true)
+        {
+            // ぶつかった瞬間の速度を一度完全にリセット
+            rbody.linearVelocity = Vector2.zero;
+            gofry = false;
+            aerial_attack = false;
         }
         if (onGround && goJump)      //地面の上でジャンプキーが押された
         {
@@ -354,6 +402,28 @@ public class Player2PController_kuwagata : MonoBehaviour
                     // play_SE.PlayOneShot(strong_SE);
                     goattack_2P = false;
                     strong = false;
+                }
+            }
+            else if (aerial_attack == true && hasGrown == true)
+            {
+                if (collision.TryGetComponent<attack_1P>(out var ToDamage))
+                {
+                    ToDamage.ToDamage_1P_baby(airNattack_powar);
+                    Debug.Log("落下ダメージ成功");
+                    //play_SE.PlayOneShot(normal_SE);
+                    goattack_2P = false;
+                    aerial_attack = false;
+                }
+            }
+            else if (aerial_attack == true && hasGrown == false)
+            {
+                if (collision.TryGetComponent<attack_1P>(out var ToDamage))
+                {
+                    ToDamage.ToDamage_1P(airNattack_powar);
+                    Debug.Log("落下ダメージ成功");
+                    //play_SE.PlayOneShot(normal_SE);
+                    goattack_2P = false;
+                    aerial_attack = false;
                 }
             }
 

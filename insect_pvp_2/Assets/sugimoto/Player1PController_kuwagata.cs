@@ -16,18 +16,20 @@ public class Player1PController_kuwagata : MonoBehaviour
     bool goJump = false;        //ジャンプ開始フラグ
     bool onGround = false;      //地面フラグ
     public float attack_powar = 5.0f;       //攻撃力
+    public float airNattack_powar = 10.0f;   //落下攻撃力
     //public float HP_1P = 100.0f;               //HP
     bool goattack_1P;                  //攻撃開始フラグ
     bool canattack;
     public float attack_cooltime;    //攻撃クールタイム
     public float Max_attack_cooltime = 300.0f;
-    bool normal = false;
-    public bool strong = false;
-    public float strong_cooltime = 5.0f;
+    public bool normal = false;
+    public bool strong = false;   
     public bool aerial_attack = false;
     public float DashAttack = 30.0f;
     public bool CanMove = true;
-    public float currentstrong_cooltime = 5.0f;
+    public float airN_cooltime = 100.0f;
+    public float currentairN_cooltime = 100.0f;
+    public bool cannot_airN = false;
 
     [Header("ダッシュ、飛行設定")]
     public float dashSpeed = 6.0f;             // ダッシュ時の移動速度
@@ -68,7 +70,7 @@ public class Player1PController_kuwagata : MonoBehaviour
         canattack = false;
         currentSpeed = speed; // 初期速度は通常速度
         attack_cooltime = Max_attack_cooltime;
-        currentstrong_cooltime = strong_cooltime;
+        currentairN_cooltime = airN_cooltime;
 
     }
 
@@ -109,15 +111,20 @@ public class Player1PController_kuwagata : MonoBehaviour
             I_can_fry++;
 
         }
-        if (strong == true)
+        if (cannot_airN == true)
         {
-            currentstrong_cooltime--;
+            
+            currentairN_cooltime--;
             CanMove = false;
         }
         else if (strong == false)
 
         {
             CanMove = true;
+        }
+        if (aerial_attack == true)
+        {
+            normal = false;
         }
 
 
@@ -205,26 +212,25 @@ public class Player1PController_kuwagata : MonoBehaviour
             goattack_1P = false;
         }
 
-        if(gofry == true && Input.GetKeyDown(KeyCode.S))
+        if(gofry == true && Input.GetKeyDown(KeyCode.S) && cannot_airN == false)
         {
             aerial_attack = true;
-            
+            goattack_1P = true;
+            cannot_airN = true;
         }
-        else
-        {
-            aerial_attack = false;
-        }
+        
 
         if (aerial_attack == true)
         {
             gofry = false;
             this.transform.Translate(Vector3.down * Time.deltaTime * DashAttack);
-            Debug.Log("aerial");
+            //Debug.Log("aerial");
         }
-        if (currentstrong_cooltime <= 0)
+        if (currentairN_cooltime <= 0)
         {
            
-            currentstrong_cooltime = strong_cooltime;
+            currentairN_cooltime = airN_cooltime;
+            cannot_airN = false;
         }
 
     }
@@ -240,6 +246,8 @@ public class Player1PController_kuwagata : MonoBehaviour
             return;
         }
 
+
+
         if (onGround || axisH != 0)  //地面の上or速度が0ではない
         {
             //速度を更新する
@@ -248,7 +256,16 @@ public class Player1PController_kuwagata : MonoBehaviour
         }
         if (onGround)
         {
+
             gofry = false;
+            
+        }
+        if (onGround == true && aerial_attack == true)
+        {
+            // ぶつかった瞬間の速度を一度完全にリセット
+            rbody.linearVelocity = Vector2.zero;
+            gofry = false;
+            aerial_attack = false;
         }
         if (onGround && goJump)      //地面の上でジャンプキーが押された
         {
@@ -257,7 +274,7 @@ public class Player1PController_kuwagata : MonoBehaviour
             Vector2 jumpPw = new Vector2(0, jump);          //ジャンプさせるベクトルを作る
             rbody.AddForce(jumpPw, ForceMode2D.Impulse);    //瞬間的な力を加える
             goJump = false;                                 //ジャンプフラグを下す 
-            aerial_attack = false;
+
         }
 
 
@@ -385,11 +402,11 @@ public class Player1PController_kuwagata : MonoBehaviour
         if (collision.gameObject.layer == LayerMask.NameToLayer("Player_2") && goattack_1P == true)
         {
 
+            
 
 
 
-
-            if (normal == true && hasGrown == true)
+            if (normal == true && hasGrown == true　&& aerial_attack == false)
             {
                 if (collision.TryGetComponent<attack_2P>(out var ToDamage))
                 {
@@ -400,7 +417,7 @@ public class Player1PController_kuwagata : MonoBehaviour
                     normal = false;
                 }
             }
-            else if (strong == true && hasGrown == true)
+            else if (strong == true && hasGrown == true && aerial_attack == false)
             {
                 if (collision.TryGetComponent<attack_2P>(out var ToDamage))
                 {
@@ -420,6 +437,7 @@ public class Player1PController_kuwagata : MonoBehaviour
                     // play_SE.PlayOneShot(normal_SE);
                     goattack_1P = false;
                     normal = false;
+                    
                 }
             }
             else if (strong == true && hasGrown == false)
@@ -433,7 +451,30 @@ public class Player1PController_kuwagata : MonoBehaviour
                     strong = false;
                 }
             }
-
+            else if(aerial_attack == true && hasGrown == true)
+            {
+                if (collision.TryGetComponent<attack_2P>(out var ToDamage))
+                {
+                    ToDamage.ToDamage_2P_baby(airNattack_powar);
+                    Debug.Log("落下ダメージ成功");
+                    //play_SE.PlayOneShot(normal_SE);
+                    goattack_1P = false;
+                    aerial_attack = false;
+                    
+                }
+            }
+            else if (aerial_attack == true && hasGrown == false)
+            {
+                if (collision.TryGetComponent<attack_2P>(out var ToDamage))
+                {
+                    ToDamage.ToDamage_2P(airNattack_powar);
+                    Debug.Log("落下ダメージ成功");
+                    //play_SE.PlayOneShot(normal_SE);
+                    goattack_1P = false;
+                    aerial_attack = false;
+                    
+                }
+            }
 
         }
         else
