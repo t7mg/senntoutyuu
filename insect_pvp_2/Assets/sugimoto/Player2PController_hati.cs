@@ -3,6 +3,8 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.InputSystem.Interactions;
 using UnityEngine.UIElements;
+using static UnityEngine.RuleTile.TilingRuleOutput;
+using System.Collections;
 
 public class Player2PController_hati : MonoBehaviour
 {
@@ -42,7 +44,14 @@ public class Player2PController_hati : MonoBehaviour
     public float growthTimer = 60.0f; // 成長までの時間
     private bool hasGrown = false; // すでに成長したかどうかのフラグ
 
+    [Header("継続ダメージ設定")]
+    public int poisontimer = 3;
+    public float interval = 1.0f;
+    public int poisondamage = 5;
 
+    private Coroutine dotCoroutine;
+
+    public attack_1P poison;
 
     [SerializeField] private InputAction _inputAction;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
@@ -55,6 +64,7 @@ public class Player2PController_hati : MonoBehaviour
         currentSpeed = speed; // 初期速度は通常速度
         attack_cooltime = Max_attack_cooltime;
         currentstrong_cooltime = strong_cooltime;
+        
     }
 
     // Update is called once per frame
@@ -319,11 +329,11 @@ public class Player2PController_hati : MonoBehaviour
     private void OnTriggerStay2D(Collider2D collision)
     {
 
-        if (collision.gameObject.layer == LayerMask.NameToLayer("Player_1") && goattack_2P == true)
+        if (collision.gameObject.layer == LayerMask.NameToLayer("Player_1") && goattack_2P == true && normal == true)
         {
 
 
-            if (normal == true && hasGrown == true)
+            if (hasGrown == true)
             {
                 if (collision.TryGetComponent<attack_1P>(out var ToDamage))
                 {
@@ -334,20 +344,7 @@ public class Player2PController_hati : MonoBehaviour
                     normal = false;
                 }
             }
-
-            else if (strong == true && hasGrown == true)
-            {
-                if (collision.TryGetComponent<attack_1P>(out var ToDamage))
-                {
-                    ToDamage.ToDamage_1P_strong(attack_powar);
-                    //Debug.Log("ダメージ成功");
-
-                    goattack_2P = false;
-                    strong = false;
-                }
-
-            }
-            else if (normal == true && hasGrown == false)
+            else if (hasGrown == false)
             {
                 if (collision.TryGetComponent<attack_1P>(out var ToDamage))
                 {
@@ -359,18 +356,6 @@ public class Player2PController_hati : MonoBehaviour
                     //Debug.Log("omaeyowai");
                 }
             }
-            else if (strong == true && hasGrown == false)
-            {
-                if (collision.TryGetComponent<attack_1P>(out var ToDamage))
-                {
-                    ToDamage.ToDamage_1P_strong_baby(attack_powar);
-                    //Debug.Log("ダメージ成功");
-                    // play_SE.PlayOneShot(strong_SE);
-                    goattack_2P = false;
-                    strong = false;
-                }
-            }
-
         }
         else
         {
@@ -379,6 +364,58 @@ public class Player2PController_hati : MonoBehaviour
 
             //Debug.Log("敵が見つかりませんでした。");
         }
+        if (collision.gameObject.layer == LayerMask.NameToLayer("Player_1") && strong == true)
+        {
+            if (hasGrown == true)
+            {
+                
+
+                poison = collision.GetComponent<attack_1P>();
+
+                if (poison != null)
+                {
+                    Debug.Log("衝突:毒付与！");
+                    poison.ApplyDoT(poisondamage, interval, poisontimer);
+                }
+
+                if (collision.TryGetComponent<attack_1P>(out var ToDamage))
+                {
+                    ToDamage.ToDamage_1P_strong(attack_powar);
+                    //Debug.Log("ダメージ成功");
+                    goattack_2P = false;
+                    strong = false;
+                }
+
+
+            }
+
+
+            else if (hasGrown == false)
+            {
+                
+                poison = collision.GetComponent<attack_1P>();
+
+                if (poison != null)
+                {
+                    poison.ApplyDoT(poisondamage, interval, poisontimer);
+                    Debug.Log("衝突:毒付与！");
+                }
+
+                if (collision.TryGetComponent<attack_1P>(out var ToDamage))
+                {
+                    ToDamage.ToDamage_1P_strong_baby(attack_powar);
+                    //Debug.Log("ダメージ成功");
+                    // play_SE.PlayOneShot(strong_SE);
+                    goattack_2P = false;
+                    strong = false;
+                }
+
+
+            }
+
+
+        }
+        
     }
 
     void growth()

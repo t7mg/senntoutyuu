@@ -23,7 +23,11 @@ public class Player1PController_kuwagata : MonoBehaviour
     public float Max_attack_cooltime = 300.0f;
     bool normal = false;
     public bool strong = false;
-    public float strong_cooltime = 300.0f;
+    public float strong_cooltime = 5.0f;
+    public bool aerial_attack = false;
+    public float DashAttack = 30.0f;
+    public bool CanMove = true;
+    public float currentstrong_cooltime = 5.0f;
 
     [Header("ダッシュ、飛行設定")]
     public float dashSpeed = 6.0f;             // ダッシュ時の移動速度
@@ -64,7 +68,7 @@ public class Player1PController_kuwagata : MonoBehaviour
         canattack = false;
         currentSpeed = speed; // 初期速度は通常速度
         attack_cooltime = Max_attack_cooltime;
-
+        currentstrong_cooltime = strong_cooltime;
 
     }
 
@@ -104,6 +108,16 @@ public class Player1PController_kuwagata : MonoBehaviour
         {
             I_can_fry++;
 
+        }
+        if (strong == true)
+        {
+            currentstrong_cooltime--;
+            CanMove = false;
+        }
+        else if (strong == false)
+
+        {
+            CanMove = true;
         }
 
 
@@ -191,6 +205,28 @@ public class Player1PController_kuwagata : MonoBehaviour
             goattack_1P = false;
         }
 
+        if(gofry == true && Input.GetKeyDown(KeyCode.S))
+        {
+            aerial_attack = true;
+            
+        }
+        else
+        {
+            aerial_attack = false;
+        }
+
+        if (aerial_attack == true)
+        {
+            gofry = false;
+            this.transform.Translate(Vector3.down * Time.deltaTime * DashAttack);
+            Debug.Log("aerial");
+        }
+        if (currentstrong_cooltime <= 0)
+        {
+           
+            currentstrong_cooltime = strong_cooltime;
+        }
+
     }
 
     void FixedUpdate()
@@ -221,6 +257,7 @@ public class Player1PController_kuwagata : MonoBehaviour
             Vector2 jumpPw = new Vector2(0, jump);          //ジャンプさせるベクトルを作る
             rbody.AddForce(jumpPw, ForceMode2D.Impulse);    //瞬間的な力を加える
             goJump = false;                                 //ジャンプフラグを下す 
+            aerial_attack = false;
         }
 
 

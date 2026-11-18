@@ -1412,6 +1412,7 @@ MonoBehaviour:
   poisontimer: 3
   interval: 1
   poisondamage: 5
+  poison: {fileID: 0}
   _inputAction:
     m_Name: Input
     m_Type: 0
@@ -2762,6 +2763,10 @@ MonoBehaviour:
   Max_attack_cooltime: 100
   strong: 0
   strong_cooltime: 300
+  aerial_attack: 0
+  DashAttack: 30
+  CanMove: 1
+  currentstrong_cooltime: 5
   dashSpeed: 6
   doubleTapThreshold: 0.3
   I_can_fry: 500
@@ -4762,9 +4767,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   countdownScript: {fileID: 112127007}
-  characterA: {fileID: 450947569}
+  characterA: {fileID: 589729407}
   characterB: {fileID: 386294912}
-  notbattle1: {fileID: 589729407}
+  notbattle1: {fileID: 450947569}
   notbattle2: {fileID: 871849801}
   notbattle3: {fileID: 507386640}
   notbattle4: {fileID: 98195138}
@@ -5122,9 +5127,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   countdownScript: {fileID: 112127007}
-  characterA: {fileID: 1471173050}
+  characterA: {fileID: 1070264020}
   characterB: {fileID: 641054448}
-  notbattle1: {fileID: 1070264020}
+  notbattle1: {fileID: 1471173050}
   notbattle2: {fileID: 1660295284}
   notbattle3: {fileID: 245965288}
   notbattle4: {fileID: 1790061394}
@@ -5193,6 +5198,10 @@ MonoBehaviour:
   I_can_fry: 500
   frying_spped: 5
   growthTimer: 60
+  poisontimer: 3
+  interval: 1
+  poisondamage: 5
+  poison: {fileID: 0}
   _inputAction:
     m_Name: Input
     m_Type: 0

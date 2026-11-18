@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using UnityEngine.UI; // 追加：UIを扱うために必要
+using System.Collections; // コルーチンを使うために必要
 
 public class attack_2P : MonoBehaviour
 {
@@ -7,6 +8,9 @@ public class attack_2P : MonoBehaviour
     static public float currentHP_2P = 100; // 現在HP
     static public float baby_debuff = 2.0f; // 幼虫時のデバフステータス
     [SerializeField] private Image _hpbarFill; // 2P用のHPバーのImage
+
+
+    private Coroutine dotCoroutine;
 
     void Start()
     {
@@ -89,6 +93,45 @@ public class attack_2P : MonoBehaviour
         }
 
 
+    }
+
+    // 2Pから呼び出される継続ダメージの受付メソッド
+    public void ApplyDoT(int damagePerTick, float interval, int tickCount)
+    {
+        //すでに毒状態（コルーチンが実行中）なら、新しい付与を無視する
+        if (dotCoroutine != null)
+        {
+            Debug.Log("毒付与無し");
+            return;
+        }
+
+        // 毒がついていない時だけ、新しくコルーチンを開始する
+        dotCoroutine = StartCoroutine(DoTLoop(damagePerTick, interval, tickCount));
+    }
+
+    // 継続ダメージの内部処理（HP_1Pを減らす）
+    private IEnumerator DoTLoop(int damage, float interval, int ticks)
+    {
+        for (int i = 0; i < ticks; i++)
+        {
+            yield return new WaitForSeconds(interval);
+
+            currentHP_2P -= damage; // 1PのHPを減少させる
+            Debug.Log($"継続ダメージ: {damage} 。残りHP_1P: {currentHP_2P}");
+            UpdateHPBar(); // ダメージを受けたらHPバーを更新する
+
+            if (currentHP_2P <= 0)
+            {
+
+                Destroy(gameObject);
+                UnityEditor.EditorApplication.isPlaying = false;
+                // 死亡した場合はこれ以上ダメージ処理をしないようにループを抜ける
+                break;
+            }
+        }
+
+        // すべてのTickが終わるか、途中でループを抜けたら変数を初期化
+        dotCoroutine = null;
     }
 
     // HPバーの見た目を変化させるメソッド

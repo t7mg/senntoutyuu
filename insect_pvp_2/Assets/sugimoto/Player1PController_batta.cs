@@ -6,6 +6,7 @@ using UnityEngine.InputSystem.Interactions;
 using UnityEngine.Rendering.Universal;
 
 
+
 public class Player1PController_batta : MonoBehaviour
 {
     [SerializeField] private Countdown countdownScript;
@@ -50,7 +51,7 @@ public class Player1PController_batta : MonoBehaviour
     public float growthTimer = 60.0f; // ¬’·‚Ü‚Å‚ÌŠÔ
     private bool hasGrown = false; // ‚·‚Å‚É¬’·‚µ‚½‚©‚Ç‚¤‚©‚Ìƒtƒ‰ƒO
 
-
+   
 
     //SE
     //public AudioClip normal_SE;
