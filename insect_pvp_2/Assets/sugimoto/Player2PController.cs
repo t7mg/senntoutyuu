@@ -100,11 +100,11 @@ public class Player2PController : MonoBehaviour
             }
         }
 
-        if(getstan1P.GetComponent<attack_2P>().CanStun == true)
-        {
-            isStopped = true;
-            getstan = false;
-        }
+       // if(getstan1P.GetComponent<attack_2P>().CanStun == true)
+       // {
+       //     isStopped = true;
+       //     getstan = false;
+       // }
 
 
         if (attack_cooltime > 0)

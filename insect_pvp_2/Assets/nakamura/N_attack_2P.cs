@@ -67,10 +67,10 @@ public class attack_2P : MonoBehaviour
 
         Debug.Log("2P残りHP" + currentHP_2P);
 
-        if (getstan2P.GetComponent<Player2PController>().getstan == false)
-        {
-            CanStun = false;
-        }
+        //if (getstan2P.GetComponent<Player2PController>().getstan == false)
+        //{
+        //    CanStun = false;
+        //}
 
         UpdateHPBar(); // ダメージを受けたらHPバーを更新する
 
@@ -98,6 +98,15 @@ public class attack_2P : MonoBehaviour
             UnityEditor.EditorApplication.isPlaying = false;
         }
 
+
+    }
+
+    public void ToCute(float cure)
+    {
+        currentHP_2P += cure;
+        Debug.Log("1P残りHP" + currentHP_2P);
+
+        UpdateHPBar(); // ダメージを受けたらHPバーを更新する
 
     }
 

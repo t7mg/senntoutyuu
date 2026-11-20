@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
-using System.Collections; // コルーチンを使うために必要
+using System.Collections;
+using Unity.VisualScripting; // コルーチンを使うために必要
 
 public class attack_1P : MonoBehaviour
 {
@@ -12,13 +13,27 @@ public class attack_1P : MonoBehaviour
 
     private Coroutine dotCoroutine;
 
+
+
     void Start()
     {
         currentHP_1P = MAX_HP_1P;
 
+        //cure_1P = GameObject.Find("Item_HP");
+
         UpdateHPBar(); // 起動時にHPバーを最大にする
     }
+    void Update()
+    {
+        //if (cure_1P.GetComponent<Item_HP>().Cure == true)
+        //{
+        //    Debug.Log("aaa");
+        //    currentHP_1P += 25;
+        //    UpdateHPBar(); // 起動時にHPバーを最大にする
+        //}
 
+
+    }
 
     // 相手の攻撃プログラムから呼び出されるメソッド
     public void ToDamage_1P(float damage)
@@ -95,7 +110,16 @@ public class attack_1P : MonoBehaviour
         }
     }
 
-         // 2Pから呼び出される継続ダメージの受付メソッド
+    public void ToCute(float cure)
+    {
+        currentHP_1P += cure;
+        Debug.Log("1P残りHP" + currentHP_1P);
+
+        UpdateHPBar(); // ダメージを受けたらHPバーを更新する
+
+    }
+
+    // 2Pから呼び出される継続ダメージの受付メソッド
     public void ApplyDoT(int damagePerTick, float interval, int tickCount)
     {
         //すでに毒状態（コルーチンが実行中）なら、新しい付与を無視する
@@ -134,14 +158,14 @@ public class attack_1P : MonoBehaviour
         dotCoroutine = null;
     }
 
-
+    
 
 
    
 
 
     // HPバーの見た目を変化させるメソッド
-    private void UpdateHPBar()
+    public void UpdateHPBar()
     {
         
         if (_hpbarFill == null) return;
