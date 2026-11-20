@@ -9,6 +9,9 @@ public class attack_2P : MonoBehaviour
     static public float baby_debuff = 2.0f; // 幼虫時のデバフステータス
     [SerializeField] private Image _hpbarFill; // 2P用のHPバーのImage
 
+    public GameObject getstan2P;
+
+    public bool CanStun = false;
 
     private Coroutine dotCoroutine;
 
@@ -64,7 +67,10 @@ public class attack_2P : MonoBehaviour
 
         Debug.Log("2P残りHP" + currentHP_2P);
 
-       
+        if (getstan2P.GetComponent<Player2PController>().getstan == false)
+        {
+            CanStun = false;
+        }
 
         UpdateHPBar(); // ダメージを受けたらHPバーを更新する
 

@@ -76,6 +76,7 @@ public class Player2PController : MonoBehaviour
         currentSpeed = speed; // ‰Šú‘¬“x‚Í’Êí‘¬“x
         attack_cooltime = Max_attack_cooltime;
         getstan = GameObject.Find("kabutomusi_0");
+
         current_stan_cooltime = stan_cooltime;
 
     }
@@ -99,7 +100,7 @@ public class Player2PController : MonoBehaviour
             }
         }
 
-        if(getstan1P.GetComponent<PlayerController>().CanStun == true)
+        if(getstan1P.GetComponent<attack_2P>().CanStun == true)
         {
             isStopped = true;
             getstan = false;

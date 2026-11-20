@@ -26,6 +26,10 @@ public class Player2PController_hati : MonoBehaviour
     public bool strong = false;
     public float strong_cooltime = 300.0f;
     public float currentstrong_cooltime = 5.0f;
+    public float stan_cooltime = 300.0f;
+    public float current_stan_cooltime;
+
+    public GameObject getstan1P;
 
     [Header("ダッシュ設定")]
     public float dashSpeed = 6.0f;             // ダッシュ時の移動速度
@@ -43,6 +47,23 @@ public class Player2PController_hati : MonoBehaviour
     [Header("成長タイマー設定")]
     public float growthTimer = 60.0f; // 成長までの時間
     private bool hasGrown = false; // すでに成長したかどうかのフラグ
+
+    public bool getstan = true;
+
+    [Header("ノックバック設定")]
+    public float knockbackForce = 7.0f; // ノックバックの左右への強さ
+    public float knockbackUpForce = 3.0f; // ノックバック時に少し浮き上がる強さ
+    public float knockbackDuration = 0.4f; // 空中での操作不能時間（秒）
+    public float landStunDuration = 1.0f; // 着地後の硬直時間（秒）
+    public float invincibleDuration = 3.0f; //スタン復帰後の無敵時間（秒）
+
+    [Header("ノックバック・スタン設定")]
+    public bool isStopped = false;             // スタン中フラグ
+    public bool isInvincible = false;          // 無敵時間フラグ
+    private bool hasLandedDuringKnockback = false; // ノックバック中の着地フラグ
+
+    public float diveBounceForceX = 4.0f;      // 敵を踏んだあとに後ろに下がる強さ
+    public float diveBounceForceY = 6.0f;      // 敵を踏んだあとに上に跳ね上がる強さ
 
     [Header("継続ダメージ設定")]
     public int poisontimer = 3;
@@ -64,7 +85,9 @@ public class Player2PController_hati : MonoBehaviour
         currentSpeed = speed; // 初期速度は通常速度
         attack_cooltime = Max_attack_cooltime;
         currentstrong_cooltime = strong_cooltime;
-        
+        getstan = GameObject.Find("kabutomusi_0");
+        current_stan_cooltime = stan_cooltime;
+
     }
 
     // Update is called once per frame
@@ -86,6 +109,12 @@ public class Player2PController_hati : MonoBehaviour
             }
         }
 
+        if (getstan1P.GetComponent<PlayerController>().CanStun == true)
+        {
+            isStopped = true;
+            getstan = false;
+        }
+
         if (attack_cooltime > 0)
         {
             attack_cooltime--;
@@ -103,6 +132,18 @@ public class Player2PController_hati : MonoBehaviour
 
         }
 
+        if (isStopped == true)
+        {
+            current_stan_cooltime--;
+        }
+        if (current_stan_cooltime < 0)
+        {
+            Debug.Log("a");
+            isStopped = false;
+            getstan = true;
+            current_stan_cooltime = stan_cooltime;
+        }
+
         if (strong == true)
         {
             currentstrong_cooltime--;
@@ -115,6 +156,12 @@ public class Player2PController_hati : MonoBehaviour
                                         Vector2.down,       //発射方向
                                         0.0f,               //発射距離
                                         groundLayer);            //検出するレイヤー
+
+        if (isStopped)
+        {
+            axisH = 0f;
+            return;
+        }
 
         if (Input.GetKey(KeyCode.UpArrow))
         {

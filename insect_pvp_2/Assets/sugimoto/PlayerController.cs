@@ -135,10 +135,7 @@ public class PlayerController : MonoBehaviour
 
         }
 
-        if (getstan2P.GetComponent<Player2PController>().getstan == false)
-        {
-            CanStun = false;
-        }
+        
 
 
 

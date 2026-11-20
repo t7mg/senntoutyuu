@@ -30,6 +30,10 @@ public class Player1PController_kuwagata : MonoBehaviour
     public float airN_cooltime = 100.0f;
     public float currentairN_cooltime = 100.0f;
     public bool cannot_airN = false;
+    public float stan_cooltime = 300.0f;
+    public float current_stan_cooltime;
+
+    public GameObject getstan2P;
 
     [Header("ダッシュ、飛行設定")]
     public float dashSpeed = 6.0f;             // ダッシュ時の移動速度
@@ -50,7 +54,18 @@ public class Player1PController_kuwagata : MonoBehaviour
     public float growthTimer = 60.0f; // 成長までの時間
     private bool hasGrown = false; // すでに成長したかどうかのフラグ
 
+    public bool getstan = true;
 
+    [Header("ノックバック・スタン設定")]
+    public bool isStopped = false;             // スタン中フラグ
+    public bool isInvincible = false;          // 無敵時間フラグ
+    private bool hasLandedDuringKnockback = false; // ノックバック中の着地フラグ
+
+    public float diveBounceForceX = 4.0f;      // 敵を踏んだあとに後ろに下がる強さ
+    public float diveBounceForceY = 6.0f;      // 敵を踏んだあとに上に跳ね上がる強さ
+
+
+   
 
     //SE
     //public AudioClip normal_SE;
@@ -71,7 +86,8 @@ public class Player1PController_kuwagata : MonoBehaviour
         currentSpeed = speed; // 初期速度は通常速度
         attack_cooltime = Max_attack_cooltime;
         currentairN_cooltime = airN_cooltime;
-
+        getstan = GameObject.Find("kabutomusi - 2P");
+        current_stan_cooltime = stan_cooltime;
     }
 
 
@@ -231,6 +247,7 @@ public class Player1PController_kuwagata : MonoBehaviour
            
             currentairN_cooltime = airN_cooltime;
             cannot_airN = false;
+             
         }
 
     }

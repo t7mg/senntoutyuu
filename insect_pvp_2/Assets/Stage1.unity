@@ -888,6 +888,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   MAX_HP_2P: 100
   _hpbarFill: {fileID: 1013699040}
+  getstan2P: {fileID: 0}
+  CanStun: 0
 --- !u!1 &320448316
 GameObject:
   m_ObjectHideFlags: 0
@@ -2918,11 +2920,19 @@ MonoBehaviour:
   airN_cooltime: 100
   currentairN_cooltime: 100
   cannot_airN: 0
+  stan_cooltime: 300
+  current_stan_cooltime: 0
+  getstan2P: {fileID: 0}
   dashSpeed: 6
   doubleTapThreshold: 0.3
   I_can_fry: 500
   frying_spped: 5
   growthTimer: 60
+  getstan: 1
+  isStopped: 0
+  isInvincible: 0
+  diveBounceForceX: 4
+  diveBounceForceY: 6
   _inputAction:
     m_Name: Input
     m_Type: 0
@@ -3300,6 +3310,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   MAX_HP_2P: 100
   _hpbarFill: {fileID: 1013699040}
+  getstan2P: {fileID: 0}
+  CanStun: 0
 --- !u!114 &641054450
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4776,6 +4788,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   MAX_HP_2P: 100
   _hpbarFill: {fileID: 1013699040}
+  getstan2P: {fileID: 0}
+  CanStun: 0
 --- !u!50 &1070264023
 Rigidbody2D:
   serializedVersion: 5
@@ -4957,9 +4971,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   countdownScript: {fileID: 112127007}
-  characterA: {fileID: 589729407}
+  characterA: {fileID: 450947569}
   characterB: {fileID: 871849801}
-  notbattle1: {fileID: 450947569}
+  notbattle1: {fileID: 589729407}
   notbattle2: {fileID: 386294912}
   notbattle3: {fileID: 507386640}
   notbattle4: {fileID: 98195138}
@@ -5317,10 +5331,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   countdownScript: {fileID: 112127007}
-  characterA: {fileID: 1070264020}
-  characterB: {fileID: 641054448}
-  notbattle1: {fileID: 1471173050}
-  notbattle2: {fileID: 1660295284}
+  characterA: {fileID: 1660295284}
+  characterB: {fileID: 1471173050}
+  notbattle1: {fileID: 641054448}
+  notbattle2: {fileID: 1070264020}
   notbattle3: {fileID: 245965288}
   notbattle4: {fileID: 1790061394}
 --- !u!1 &1471173050
@@ -5340,7 +5354,7 @@ GameObject:
   - component: {fileID: 1471173057}
   m_Layer: 11
   m_Name: hati - 2P
-  m_TagString: Untagged
+  m_TagString: 2P
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -5359,6 +5373,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   MAX_HP_2P: 100
   _hpbarFill: {fileID: 1013699040}
+  getstan2P: {fileID: 0}
+  CanStun: 0
 --- !u!114 &1471173052
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5383,11 +5399,24 @@ MonoBehaviour:
   strong: 0
   strong_cooltime: 300
   currentstrong_cooltime: 5
+  stan_cooltime: 300
+  current_stan_cooltime: 0
+  getstan1P: {fileID: 450947569}
   dashSpeed: 6
   doubleTapThreshold: 0.3
   I_can_fry: 500
   frying_spped: 5
   growthTimer: 60
+  getstan: 1
+  knockbackForce: 7
+  knockbackUpForce: 3
+  knockbackDuration: 0.4
+  landStunDuration: 1
+  invincibleDuration: 3
+  isStopped: 0
+  isInvincible: 0
+  diveBounceForceX: 4
+  diveBounceForceY: 6
   poisontimer: 3
   interval: 1
   poisondamage: 5
@@ -6595,6 +6624,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   MAX_HP_2P: 100
   _hpbarFill: {fileID: 1013699040}
+  getstan2P: {fileID: 450947569}
+  CanStun: 0
 --- !u!1 &1661682862
 GameObject:
   m_ObjectHideFlags: 0
@@ -7266,6 +7297,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   MAX_HP_2P: 100
   _hpbarFill: {fileID: 1013699040}
+  getstan2P: {fileID: 0}
+  CanStun: 0
 --- !u!1 &1891359791
 GameObject:
   m_ObjectHideFlags: 0
